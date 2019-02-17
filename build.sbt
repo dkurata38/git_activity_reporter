@@ -14,3 +14,4 @@ lazy val git_activity_reporter = (project in file(".")).
 resolvers += "Sonatype OSS Releases" at "https://oss.sonatype.org/service/local/repositories/releases/content"
 
 libraryDependencies += "org.eclipse.mylyn.github" % "org.eclipse.egit.github.core" % "2.1.5"
+libraryDependencies += "com.typesafe" % "config" % "1.3.1"
