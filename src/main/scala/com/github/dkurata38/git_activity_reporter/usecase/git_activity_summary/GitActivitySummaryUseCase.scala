@@ -1,7 +1,7 @@
 package com.github.dkurata38.git_activity_reporter.usecase.git_activity_summary
 
+import com.github.dkurata38.git_activity_reporter.application.client.GitEventClientFactory
 import com.github.dkurata38.git_activity_reporter.domain.git_event.GitEvent.Push
-import com.github.dkurata38.git_activity_reporter.domain.git_event.GitEventClientFactory
 import com.github.dkurata38.git_activity_reporter.infrastracture.repository.git_account.GitAccountRepository
 
 class GitActivitySummaryUseCase {

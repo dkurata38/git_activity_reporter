@@ -1,7 +1,7 @@
 package com.github.dkurata38.git_activity_reporter.infrastracture.client.git_event.github
 
+import com.github.dkurata38.git_activity_reporter.domain.`type`.GitClientId.GitHub
 import com.github.dkurata38.git_activity_reporter.domain.git_account.GitAccount
-import com.github.dkurata38.git_activity_reporter.domain.git_account.GitAccount.ClientId.GitHub
 import com.typesafe.config.ConfigFactory
 
 object GitHubEventClientTest extends App {

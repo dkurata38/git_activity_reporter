@@ -2,9 +2,12 @@ package com.github.dkurata38.git_activity_reporter.infrastracture.client.git_eve
 
 import java.time.{LocalDate, LocalDateTime, ZoneId}
 
+import com.github.dkurata38.git_activity_reporter.application.client.GitEventClient
+import com.github.dkurata38.git_activity_reporter.domain.`type`.GitClientId.GitHub
+import com.github.dkurata38.git_activity_reporter.domain.`type`.GitRepositoryId
 import com.github.dkurata38.git_activity_reporter.domain.git_account.GitAccount
 import com.github.dkurata38.git_activity_reporter.domain.git_event.GitEvent.Push
-import com.github.dkurata38.git_activity_reporter.domain.git_event.{GitEvent, GitEventClient, GitRepository}
+import com.github.dkurata38.git_activity_reporter.domain.git_event.{GitEvent, GitRepository}
 import org.eclipse.egit.github.core.client.{GitHubClient, PageIterator}
 import org.eclipse.egit.github.core.event.Event
 import org.eclipse.egit.github.core.service.{EventService, RepositoryService}
@@ -33,7 +36,7 @@ class GitHubEventClient extends GitEventClient {
       val events = initEvents ++ eventPageIterator.next().asScala
           .filter(e => LocalDateTime.ofInstant(e.getCreatedAt.toInstant, ZoneId.systemDefault()).toLocalDate.isAfter(LocalDate.now().minusDays(7)))
         .filter(e => e.getType == "PushEvent")
-        .map(e => new GitEvent(GitRepository(e.getRepo.getName, e.getRepo.getUrl.replace("api.", "").replace("/repos", "")), Push))
+        .map(e => new GitEvent(GitRepository(GitHub, new GitRepositoryId(e.getRepo.getName), e.getRepo.getUrl.replace("api.", "").replace("/repos", "")), Push))
       parseEventRecursive(eventPageIterator, events)
     }
     parseEventRecursive(eventPageIterator, Nil)
