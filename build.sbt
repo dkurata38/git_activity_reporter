@@ -15,3 +15,4 @@ resolvers += "Sonatype OSS Releases" at "https://oss.sonatype.org/service/local/
 
 libraryDependencies += "org.eclipse.mylyn.github" % "org.eclipse.egit.github.core" % "2.1.5"
 libraryDependencies += "com.typesafe" % "config" % "1.3.1"
+libraryDependencies += "org.twitter4j" % "twitter4j-core" % "4.0.4"
