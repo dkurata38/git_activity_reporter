@@ -1,4 +1,4 @@
-package com.github.dkurata38.git_activity_reporter.usecase.git_activity_summary
+package com.github.dkurata38.git_activity_reporter.domain.model.git
 
 import scala.collection.generic.CanBuildFrom
 

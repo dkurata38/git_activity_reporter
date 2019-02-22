@@ -1,6 +1,15 @@
 package com.github.dkurata38.git_activity_reporter.domain.`type`
 
-sealed abstract class GitClientId(val value: String)
+sealed abstract class GitClientId(val value: String) {
+  override def hashCode(): Int = value.hashCode
+
+  override def equals(obj: Any): Boolean = {
+    obj match {
+      case obj: GitClientId => value == obj.value
+      case _ => false
+    }
+  }
+}
 
 object GitClientId {
   case object GitHub extends GitClientId("GitHub")

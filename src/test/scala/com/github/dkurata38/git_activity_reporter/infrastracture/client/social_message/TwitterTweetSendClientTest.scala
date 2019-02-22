@@ -1,8 +1,7 @@
 package com.github.dkurata38.git_activity_reporter.infrastracture.client.social_message
 
-import com.github.dkurata38.git_activity_reporter.domain.social_account.SocialAccount
-import com.github.dkurata38.git_activity_reporter.domain.social_account.SocialAccount.Twitter
-import com.github.dkurata38.git_activity_reporter.domain.social_message.SocialMessage
+import com.github.dkurata38.git_activity_reporter.domain.`type`.SocialClientId.Twitter
+import com.github.dkurata38.git_activity_reporter.domain.model.social.{SocialAccount, SocialMessage}
 import com.typesafe.config.ConfigFactory
 
 object TwitterTweetSendClientTest extends App {
