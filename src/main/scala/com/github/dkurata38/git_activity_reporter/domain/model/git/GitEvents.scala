@@ -2,10 +2,10 @@ package com.github.dkurata38.git_activity_reporter.domain.model.git
 
 import com.github.dkurata38.git_activity_reporter.domain.`type`.GitEventType.Push
 
-class GitEvents (private val events: Seq[GitEvent]) extends Seq[GitEvent]{
+class GitEvents (private val events: Seq[GitEvent]) {
   def countByRepositoryAndEventType() = {
 
-    val gitActivitySummaries = events.groupBy(e => e.gitRepository).map(e => new GitActivitySummary(e._1, Push, e._2.size)).toList
+    val gitActivitySummaries = events.groupBy(e => e.gitRepository).map(e => new GitActivitySummary(e._1, Push, e._2.size)).toSeq
     new GitActivitySummaries(gitActivitySummaries)
   }
 
@@ -13,11 +13,15 @@ class GitEvents (private val events: Seq[GitEvent]) extends Seq[GitEvent]{
     new GitEvents(events ++ gitEvents.events)
   }
 
-  override def length: Int = events.length
+  def length: Int = events.length
 
-  override def apply(idx: Int): GitEvent = events.apply(idx)
+  def apply(idx: Int): GitEvent = events.apply(idx)
 
-  override def iterator: Iterator[GitEvent] = events.iterator
+  def iterator: Iterator[GitEvent] = events.iterator
+
+  def foreach(f: GitEvent => Unit) = events.foreach(f)
+
+  def map[T](f: GitEvent => T) = events.map(f)
 }
 
 object GitEvents {
