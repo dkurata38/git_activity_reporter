@@ -1,6 +1,7 @@
 package com.github.dkurata38.git_activity_reporter.infrastracture.repository.git_account
 
 import com.github.dkurata38.git_activity_reporter.application.repository.IGitAccountRepository
+import com.github.dkurata38.git_activity_reporter.domain.`type`.GitClientId
 import com.github.dkurata38.git_activity_reporter.domain.`type`.GitClientId.GitHub
 import com.github.dkurata38.git_activity_reporter.domain.model.git.GitAccount
 import com.typesafe.config.ConfigFactory
@@ -13,5 +14,5 @@ class GitAccountRepository extends IGitAccountRepository{
     Seq(githubAccount)
   }
 
-  override def findOneByUserIdAndGitProviderId(userId: Int): Option[GitAccount] = ???
+  override def findOneByUserIdAndGitProviderId(userId: Int, clientId: GitClientId): Option[GitAccount] = ???
 }
