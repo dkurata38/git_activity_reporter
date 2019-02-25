@@ -2,9 +2,10 @@ package com.github.dkurata38.git_activity_reporter.application.service
 
 import com.github.dkurata38.git_activity_reporter.application.repository.IGitAccountRepository
 import com.github.dkurata38.git_activity_reporter.domain.model.user.UserId
-import com.github.dkurata38.git_activity_reporter.infrastracture.repository.git_account.GitAccountRepository
+import javax.inject.{Inject, Singleton}
 
-class GitAccountService(private val repository: IGitAccountRepository = new GitAccountRepository) {
+@Singleton
+class GitAccountService @Inject() (private val repository: IGitAccountRepository) {
   def oauthLogin() = ???
   def add() = ???
 

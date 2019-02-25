@@ -7,6 +7,7 @@ import com.github.dkurata38.git_activity_reporter.domain.`type`.GitClientId.GitH
 import com.github.dkurata38.git_activity_reporter.domain.`type`.GitEventType.Push
 import com.github.dkurata38.git_activity_reporter.domain.`type`.GitRepositoryId
 import com.github.dkurata38.git_activity_reporter.domain.model.git.{GitAccount, GitEvent, GitEvents, GitRepository}
+import javax.inject.Singleton
 import org.eclipse.egit.github.core.client.{GitHubClient, PageIterator}
 import org.eclipse.egit.github.core.event.Event
 import org.eclipse.egit.github.core.service.{EventService, RepositoryService}
@@ -14,6 +15,7 @@ import org.eclipse.egit.github.core.service.{EventService, RepositoryService}
 import scala.annotation.tailrec
 import scala.collection.JavaConverters.collectionAsScalaIterableConverter
 
+@Singleton
 class GitHubEventClient extends GitEventClient {
   override def getUserEvents(gitAccount: GitAccount): GitEvents = {
     val eventClient = new GitHubClient()

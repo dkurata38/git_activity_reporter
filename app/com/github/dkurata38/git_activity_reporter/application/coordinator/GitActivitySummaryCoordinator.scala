@@ -4,8 +4,10 @@ import com.github.dkurata38.git_activity_reporter.application.client.GitEventCli
 import com.github.dkurata38.git_activity_reporter.application.service.GitAccountService
 import com.github.dkurata38.git_activity_reporter.domain.model.git.{GitActivitySummaries, GitEvents}
 import com.github.dkurata38.git_activity_reporter.domain.model.user.UserId
+import javax.inject.{Inject, Singleton}
 
-class GitActivitySummaryCoordinator(private val accountService: GitAccountService = new GitAccountService()){
+@Singleton
+class GitActivitySummaryCoordinator @Inject() (private val accountService: GitAccountService){
   def summarize(userId: UserId): GitActivitySummaries = {
     val gitAccounts = accountService.getAllByUserId(userId)
 

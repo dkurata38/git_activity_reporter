@@ -6,12 +6,14 @@ import com.github.dkurata38.git_activity_reporter.domain.`type`.GitClientId.GitH
 import com.github.dkurata38.git_activity_reporter.domain.model.git.GitAccount
 import com.github.dkurata38.git_activity_reporter.domain.model.user.UserId
 import com.typesafe.config.ConfigFactory
+import javax.inject.{Inject, Singleton}
 
-class GitAccountRepository extends IGitAccountRepository{
+@Singleton
+class GitAccountRepository @Inject() extends IGitAccountRepository{
   val config = ConfigFactory.load()
 
   override def findAllByUserId(userId: UserId): Seq[GitAccount] = {
-    val githubAccount = new GitAccount(UserId(1111), GitHub, config.getString("app.github.user_name"), config.getString("app.github.access_token"))
+    val githubAccount = new GitAccount(UserId("1111"), GitHub, config.getString("app.github.user_name"), config.getString("app.github.access_token"))
     Seq(githubAccount)
   }
 

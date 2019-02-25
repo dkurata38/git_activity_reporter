@@ -5,7 +5,7 @@ import com.github.dkurata38.git_activity_reporter.application.service.SocialAcco
 import com.github.dkurata38.git_activity_reporter.domain.model.social.SocialMessage
 import com.github.dkurata38.git_activity_reporter.domain.model.user.UserId
 
-class SendMessageCoordinator(private val accountService: SocialAccountService = new SocialAccountService()) {
+class SendMessageCoordinator(private val accountService: SocialAccountService) {
   def sendMessage(userId: UserId, message: SocialMessage) = {
     val accounts = accountService.getAllByUserId(userId)
 

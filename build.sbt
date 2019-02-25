@@ -14,6 +14,8 @@ lazy val git_activity_reporter = (project in file(".")).
 resolvers += "Sonatype OSS Releases" at "https://oss.sonatype.org/service/local/repositories/releases/content"
 
 libraryDependencies += guice
+libraryDependencies += caffeine
+libraryDependencies += ws
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.1" % Test
 libraryDependencies += "org.eclipse.mylyn.github" % "org.eclipse.egit.github.core" % "2.1.5"
 libraryDependencies += "org.twitter4j" % "twitter4j-core" % "4.0.4"
