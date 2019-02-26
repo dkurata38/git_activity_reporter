@@ -5,8 +5,8 @@ lazy val git_activity_reporter = (project in file(".")).
     inThisBuild(List(
       organization := "com.github.dkurata38",
       scalaVersion := "2.12.8",
-      version      := "0.1.0-SNAPSHOT",
-      name         := "git_activity_reporter"
+      version := "0.1.0-SNAPSHOT",
+      name := "git_activity_reporter"
     )),
     libraryDependencies += scalaTest % Test
   ).enablePlugins(PlayScala)

@@ -4,11 +4,15 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /                           controllers.HomeController.index
-GET     /twitter/oauth              com.github.dkurata38.git_activity_reporter.controllers.TwitterOAuthController.signIn
-GET     /twitter/oauthCallback      com.github.dkurata38.git_activity_reporter.controllers.TwitterOAuthController.oauthCallback
-GET     /github/oauth              com.github.dkurata38.git_activity_reporter.controllers.GithubOAuthController.signIn
-GET     /github/oauthCallback      com.github.dkurata38.git_activity_reporter.controllers.GithubOAuthController.oauthCallback
+GET        /                             controllers.HomeController.index
+GET        /twitter/oauth                controllers.TwitterOAuthController.signIn
+GET        /twitter/oauthCallback        controllers.TwitterOAuthController.oauthCallback
+GET        /github/oauth                 controllers.GithubOAuthController.signIn
+GET        /github/oauthCallback         controllers.GithubOAuthController.oauthCallback
+GET        /signup/git           controllers.SignUpController.linkGit
+GET        /signup/sns           controllers.SignUpController.linkSNS
+GET        /signup/complete           controllers.SignUpController.complete
+GET         /summary/index      controllers.SummaryController.index
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+GET        /assets/*file                 controllers.Assets.versioned(path="/public", file: Asset)
