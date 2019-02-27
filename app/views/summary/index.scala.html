@@ -1,9 +1,8 @@
-@()
+@import domain.model.git.GitEvents
+
+@(gitEvents: GitEvents)
 
 @main("Welcome to Play") {
-    <h1>Welcome to Play!</h1>
-    <h2>Gitと連携してアクティビティをシェアする</h2>
-    <ul>
-        <li><a href="@routes.SignUpController.linkGit">登録する</a></li>
-    </ul>
+  <h1>Welcome to Play!</h1>
+
 }
