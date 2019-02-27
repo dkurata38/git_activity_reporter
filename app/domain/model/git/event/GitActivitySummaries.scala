@@ -1,4 +1,4 @@
-package domain.model.git
+package domain.model.git.event
 
 import scala.collection.generic.CanBuildFrom
 

@@ -2,7 +2,7 @@ package application.coordinator
 
 import application.client.GitEventClientFactory
 import application.service.GitAccountService
-import domain.model.git.{GitActivitySummaries, GitEvents}
+import domain.model.git.event.{GitActivitySummaries, GitEvents}
 import domain.model.user.UserId
 import javax.inject.{Inject, Singleton}
 

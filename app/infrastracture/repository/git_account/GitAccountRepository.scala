@@ -1,8 +1,7 @@
 package infrastracture.repository.git_account
 
 import application.repository.IGitAccountRepository
-import domain.`type`.GitClientId
-import domain.model.git.GitAccount
+import domain.model.git.account.{AccessToken, GitAccount, GitClientId}
 import domain.model.user.UserId
 import javax.inject.{Inject, Singleton}
 import scalikejdbc._
@@ -26,7 +25,7 @@ class GitAccountRepository @Inject() extends IGitAccountRepository {
 
   override def create(gitAccount: GitAccount): Unit = {
     DB autoCommit {implicit session: DBSession =>
-      sql"INSERT INTO git_account(user_account_id, client_id, user_name, access_token) VALUES (${gitAccount.userId.value}, ${gitAccount.clientId.value}, ${gitAccount.gitUserName}, ${gitAccount.accessToken})"
+      sql"INSERT INTO git_account(user_account_id, client_id, user_name, access_token) VALUES (${gitAccount.userId.value}, ${gitAccount.clientId.value}, ${gitAccount.gitUserName}, ${gitAccount.accessToken.value})"
         .update().apply()
     }
   }
@@ -35,6 +34,6 @@ class GitAccountRepository @Inject() extends IGitAccountRepository {
     UserId(rs.string("user_id")),
     GitClientId.getByValue(rs.string("client_id")),
     rs.string("user_name"),
-    rs.string("access_token")
+    AccessToken(rs.string("access_token"))
   )
 }

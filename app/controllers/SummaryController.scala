@@ -1,5 +1,6 @@
 package controllers
 
+import application.cache.SignInCache
 import application.coordinator.GitEventsCoordinator
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration

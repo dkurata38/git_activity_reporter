@@ -3,8 +3,10 @@ package controllers
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-import domain.`type`.GitClientId.GitHub
-import domain.model.git.GitAccount
+import application.cache.SignUpCache
+import application.service.GitAccountService
+import domain.model.git.account.{AccessToken, GitAccount}
+import domain.model.git.account.GitClientId.GitHub
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.cache.SyncCacheApi

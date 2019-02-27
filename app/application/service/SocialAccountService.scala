@@ -1,8 +1,7 @@
 package application.service
 
 import application.repository.ISocialAccountRepository
-import domain.`type`.SocialClientId
-import domain.model.social.{SocialAccount, SocialAccountId}
+import domain.model.social.{SocialAccount, SocialAccountId, SocialClientId}
 import domain.model.user.UserId
 import javax.inject.{Inject, Singleton}
 

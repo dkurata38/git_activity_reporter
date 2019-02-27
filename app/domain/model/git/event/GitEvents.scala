@@ -1,6 +1,6 @@
-package domain.model.git
+package domain.model.git.event
 
-import domain.`type`.GitEventType.Push
+import domain.model.git.event.GitEventType.Push
 
 class GitEvents(private val events: Seq[GitEvent]) {
   def countByRepositoryAndEventType() = {

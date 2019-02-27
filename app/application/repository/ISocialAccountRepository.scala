@@ -1,7 +1,6 @@
 package application.repository
 
-import domain.`type`.SocialClientId
-import domain.model.social.{SocialAccount, SocialAccountId}
+import domain.model.social.{SocialAccount, SocialAccountId, SocialClientId}
 import domain.model.user.UserId
 
 trait ISocialAccountRepository {

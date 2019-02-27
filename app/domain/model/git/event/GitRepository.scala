@@ -1,6 +1,6 @@
-package domain.model.git
+package domain.model.git.event
 
-import domain.`type`.{GitClientId, GitRepositoryId}
+import domain.model.git.account.GitClientId
 
 case class GitRepository(gitClientId: GitClientId, repositoryId: GitRepositoryId, repositoryUrl: String) {
 

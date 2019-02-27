@@ -1,4 +1,4 @@
-package domain.`type`
+package domain.model.git.account
 
 sealed abstract class GitClientId(val value: String) {
   override def hashCode(): Int = value.hashCode

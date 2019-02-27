@@ -1,13 +1,14 @@
 package application.client
 
-import domain.`type`.GitClientId
-import domain.`type`.GitClientId.GitHub
-import infrastracture.client.git_event.github.GitHubEventClient
+import domain.model.git.account.GitClientId
+import domain.model.git.account.GitClientId.GitHub
+import infrastracture.client.git.github.GitHubClient
 
 class GitEventClientFactory {
-  def getInstance(clientId: GitClientId): GitEventClient = {
+  def getInstance(clientId: GitClientId): GitClient = {
     clientId match {
-      case GitHub => new GitHubEventClient
+      case GitHub => new GitHubClient
+      case _ => throw new IllegalArgumentException
     }
   }
 }

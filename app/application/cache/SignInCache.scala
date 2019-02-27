@@ -1,4 +1,4 @@
-package controllers
+package application.cache
 
 import domain.model.user.UserId
 

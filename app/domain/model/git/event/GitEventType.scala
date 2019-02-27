@@ -1,4 +1,4 @@
-package domain.`type`
+package domain.model.git.event
 
 sealed abstract class GitEventType
 

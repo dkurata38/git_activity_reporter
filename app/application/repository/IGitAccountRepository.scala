@@ -1,7 +1,6 @@
 package application.repository
 
-import domain.`type`.GitClientId
-import domain.model.git.GitAccount
+import domain.model.git.account.{GitAccount, GitClientId}
 import domain.model.user.UserId
 
 trait IGitAccountRepository {

@@ -1,5 +1,6 @@
 package controllers
 
+import application.cache.SignUpCache
 import javax.inject.{Inject, Singleton}
 import play.api.cache.SyncCacheApi
 import play.api.mvc.{AbstractController, ControllerComponents}

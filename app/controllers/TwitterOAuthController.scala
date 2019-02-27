@@ -2,10 +2,11 @@ package controllers
 
 import java.util.concurrent.TimeUnit
 
+import application.cache.SignUpCache
 import application.coordinator.UserCoordinator
-import domain.`type`.SocialClientId
-import domain.model.social.{SocialAccessToken, SocialAccount, SocialAccountId}
+import domain.model.social.{SocialAccessToken, SocialAccount, SocialAccountId, SocialClientId}
 import javax.inject.{Inject, Singleton}
+import play.api.Configuration
 import play.api.cache.SyncCacheApi
 import play.api.mvc.{AnyContent, ControllerComponents, Request}
 import twitter4j.auth.RequestToken

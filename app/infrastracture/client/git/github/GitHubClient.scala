@@ -1,25 +1,27 @@
-package infrastracture.client.git_event.github
+package infrastracture.client.git.github
 
 import java.time.{LocalDate, LocalDateTime, ZoneId}
 
-import application.client.GitEventClient
-import domain.`type`.GitClientId.GitHub
-import domain.`type`.GitEventType.Push
-import domain.`type`.GitRepositoryId
-import domain.model.git.{GitAccount, GitEvent, GitEvents, GitRepository}
+import application.client.GitClient
+import domain.model.git.account.GitClientId.GitHub
+import domain.model.git.account.{AccessToken, GitAccount}
+import domain.model.git.event.GitEventType.Push
+import domain.model.git.event.{GitEvent, GitEvents, GitRepository, GitRepositoryId}
 import javax.inject.Singleton
-import org.eclipse.egit.github.core.client.{GitHubClient, PageIterator}
+import org.eclipse.egit.github.core.client
+import org.eclipse.egit.github.core.client.PageIterator
 import org.eclipse.egit.github.core.event.Event
-import org.eclipse.egit.github.core.service.{EventService, RepositoryService}
+import org.eclipse.egit.github.core.service.{EventService, UserService}
 
 import scala.annotation.tailrec
 import scala.collection.JavaConverters.collectionAsScalaIterableConverter
 
 @Singleton
-class GitHubEventClient extends GitEventClient {
+class GitHubClient extends GitClient {
   override def getUserEvents(gitAccount: GitAccount): GitEvents = {
-    val eventClient = new GitHubClient()
-    eventClient.setOAuth2Token(gitAccount.accessToken)
+    val eventClient = new client.GitHubClient()
+
+    eventClient.setOAuth2Token(gitAccount.accessToken.value)
     val eventService = new EventService(eventClient)
     val eventPageIterator = eventService.pageUserEvents(gitAccount.gitUserName)
 
@@ -43,9 +45,15 @@ class GitHubEventClient extends GitEventClient {
     new GitEvents(parseEventRecursive(eventPageIterator, Nil))
   }
 
-  def getRepositoryHtmlUrl(accessToken: String, owner: String, repositoryName: String): String = {
-    val repositoryService = new RepositoryService(new GitHubClient(accessToken))
-    val repository = repositoryService.getRepository(owner, repositoryName)
-    repository.getHtmlUrl
+//  def getRepository(accessToken: AccessToken, repositoryId: GitRepositoryId): String = {
+//    val repositoryService = new RepositoryService(new client.GitHubClient(accessToken.value))
+//    val repository = repositoryService.getRepository(repositoryId.owner, repositoryId.repositoryName)
+//    repository.getHtmlUrl
+//  }
+  override def getAuthenticatedUser(accessToken: AccessToken): Option[GitAccount] = {
+    val gitHubClient = new client.GitHubClient(accessToken.value)
+    val userService = new UserService(gitHubClient)
+  val user = userService.getUser
+  Option(user).map(u => new GitAccount(null, GitHub, user.getName, accessToken))
   }
 }

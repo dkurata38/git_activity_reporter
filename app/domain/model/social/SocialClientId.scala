@@ -1,4 +1,4 @@
-package domain.`type`
+package domain.model.social
 
 sealed class SocialClientId(val value: String)
 
