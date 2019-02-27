@@ -20,7 +20,7 @@ class UserCoordinator @Inject()(private val socialAccountService: SocialAccountS
     val user = User.newUser
     val registeredUser = userService.registerUser(user)
 
-    val socialUser = new SocialAccount(registeredUser.userId, clientId, accountId, accessToken)
+    val socialUser = new SocialAccount(user.userId, clientId, accountId, accessToken)
     socialAccountService.link(socialUser)
     user.userId
   }

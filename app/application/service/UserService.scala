@@ -6,5 +6,5 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class UserService @Inject()(private val repository: IUserRepository) {
-  def registerUser(user: User): User = repository.create(user)
+  def registerUser(user: User): Int = repository.create(user)
 }
