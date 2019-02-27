@@ -7,14 +7,17 @@ import com.github.dkurata38.git_activity_reporter.domain.model.user.UserId
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class GitActivitySummaryCoordinator @Inject() (private val accountService: GitAccountService){
+class GitEventsCoordinator @Inject()(private val accountService: GitAccountService){
   def summarize(userId: UserId): GitActivitySummaries = {
+    val gitEvents = getGitEvents(userId)
+    gitEvents.countByRepositoryAndEventType()
+  }
+
+  def getGitEvents(userId: UserId): GitEvents = {
     val gitAccounts = accountService.getAllByUserId(userId)
 
-    val gitEvents = gitAccounts.map { a =>
+    gitAccounts.map { a =>
       new GitEventClientFactory().getInstance(a.clientId).getUserEvents(a)
     }.foldRight(GitEvents.emptyCollection())((elem: GitEvents, accum: GitEvents) => accum ++ elem)
-
-    gitEvents.countByRepositoryAndEventType()
   }
 }
