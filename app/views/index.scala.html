@@ -1,9 +1,64 @@
 @()
 
 @main("Welcome to Play") {
-    <h1>Welcome to Play!</h1>
-    <h2>Gitと連携してアクティビティをシェアする</h2>
-    <ul>
-        <li><a href="@routes.SignUpController.linkGit">登録する</a></li>
-    </ul>
+
+    <div class="uk-section">
+        <div class="uk-container uk-container-small">
+
+            <h1 class="uk-heading-line uk-text-center"><span>Gitと連携してアクティビティをシェアする</span></h1>
+            <ul uk-tab>
+                <li><a href="#">SignUp</a></li>
+                <li><a href="#">SignIn</a></li>
+            </ul>
+
+            <ul class="uk-switcher uk-margin">
+                <li>
+                    <div>
+                        <div class="uk-card uk-card-default">
+                            <div class="uk-card-header">
+                                <div class="uk-grid-small uk-flex-middle" uk-grid>
+                                    <h3 class="uk-card-title">SignUp to share git activity summary</h3>
+                                </div>
+                            </div>
+                            <div class="uk-card-body">
+                            </div>
+                            <div class="uk-card-footer">
+                                <a href="@routes.SignUpController.linkGit" class="uk-button uk-button-text">登録する</a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="uk-child-width-1-2@@s" uk-grid>
+
+                        <div>
+                            <div class="uk-card uk-card-default">
+                                <div class="uk-card-header">
+                                    <div class="uk-grid-small uk-flex-middle" uk-grid>
+                                        <h3 class="uk-card-title">SignIn with Git Account</h3>
+                                    </div>
+                                </div>
+                                <div class="uk-card-body">
+                                    <a class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom">Twitterアカウントでログイン</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="uk-card uk-card-default">
+                                <div class="uk-card-header">
+                                    <div class="uk-grid-small uk-flex-middle" uk-grid>
+                                        <h3 class="uk-card-title">SignIn with Social Networking Account</h3>
+                                    </div>
+                                </div>
+                                <div class="uk-card-body">
+                                    <a class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom">Twitterアカウントでログイン</a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
 }
