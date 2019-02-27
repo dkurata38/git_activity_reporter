@@ -18,7 +18,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 
 @Singleton
-class GithubOAuthController @Inject()(config: Configuration, ws: WSClient, cache: SyncCacheApi, cc: ControllerComponents) extends OAuthController(cache, cc) {
+class GithubOAuthController @Inject()(config: Configuration, ws: WSClient, cache: SyncCacheApi, cc: ControllerComponents, gitAccountService: GitAccountService) extends OAuthController(cache, cc) {
   override def signIn(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
     val url = "https://github.com/login/oauth/authorize"
     val clientId = config.get[String]("app.github.client_id")
@@ -56,18 +56,21 @@ class GithubOAuthController @Inject()(config: Configuration, ws: WSClient, cache
 
       futureAccessToken.onComplete(accessTokenTry =>
         accessTokenTry.foreach { accessToken =>
-          val signUpCacheOption: Option[SignUpCache] = cache.get("signUpCache")
-          signUpCacheOption.foreach {
-            e =>
-              e.gitAccount = Some(
-                new GitAccount(
-                  e.user.userId,
-                  GitHub,
-                  "",
-                  accessToken
-                )
+          val signUpCacheOption: Option[SignUpCache] = cache.get(config.get[String]("app.signup.cache_name"))
+          val gitUserOption = gitAccountService.getAuthenticatedUser(GitHub, AccessToken(accessToken))
+          for {
+            signUpCache <- signUpCacheOption
+            gitUser <- gitUserOption
+          } yield {
+            signUpCache.gitAccount = Some(
+              new GitAccount(
+                signUpCache.userId,
+                GitHub,
+                gitUser.gitUserName,
+                AccessToken(accessToken)
               )
-              Redirect(routes.SignUpController.linkSNS())
+            )
+            Redirect(routes.SignUpController.linkSNS())
           }
         }
       )

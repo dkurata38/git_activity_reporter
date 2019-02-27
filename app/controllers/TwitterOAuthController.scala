@@ -15,7 +15,7 @@ import twitter4j.{Twitter, TwitterFactory}
 import scala.concurrent.duration.Duration
 
 @Singleton
-class TwitterOAuthController @Inject()(cache: SyncCacheApi, cc: ControllerComponents, userCoordinator: UserCoordinator) extends OAuthController(cache, cc) {
+class TwitterOAuthController @Inject()(cache: SyncCacheApi, cc: ControllerComponents, userCoordinator: UserCoordinator, config: Configuration) extends OAuthController(cache, cc) {
   override def signIn() = Action { implicit request: Request[AnyContent] =>
     val twitter = new TwitterFactory().getInstance()
     val requestToken: RequestToken = twitter.getOAuthRequestToken("http://127.0.0.1:9000/twitter/signInCallback")
@@ -50,12 +50,12 @@ class TwitterOAuthController @Inject()(cache: SyncCacheApi, cc: ControllerCompon
           signInResult match {
             case Some(result) => cache.set("signInCache", result)
             case _ => {
-              val signUpCacheOption: Option[SignUpCache] = cache.get("signUpCache")
+              val signUpCacheOption: Option[SignUpCache] = cache.get(config.get[String]("app.signup.cache_name"))
               signUpCacheOption.foreach {
                 e =>
                   e.socialAccount = Some(
                     new SocialAccount(
-                      e.user.userId,
+                      e.userId,
                       SocialClientId.Twitter,
                       SocialAccountId(accessToken.getScreenName),
                       SocialAccessToken(accessToken.getToken, accessToken.getTokenSecret)
