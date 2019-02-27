@@ -19,4 +19,11 @@ object GitClientId {
 
   case object BitBucket extends GitClientId("BitBucket")
 
+  def getByValue(value: String): GitClientId = {
+    value match {
+      case "GitHub" => GitHub
+      case _ => ???
+    }
+  }
+
 }

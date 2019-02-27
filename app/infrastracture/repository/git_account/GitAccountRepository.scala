@@ -2,20 +2,39 @@ package infrastracture.repository.git_account
 
 import application.repository.IGitAccountRepository
 import domain.`type`.GitClientId
-import domain.`type`.GitClientId.GitHub
 import domain.model.git.GitAccount
 import domain.model.user.UserId
-import com.typesafe.config.ConfigFactory
 import javax.inject.{Inject, Singleton}
+import scalikejdbc._
 
 @Singleton
 class GitAccountRepository @Inject() extends IGitAccountRepository {
-  val config = ConfigFactory.load()
-
   override def findAllByUserId(userId: UserId): Seq[GitAccount] = {
-    val githubAccount = new GitAccount(UserId("1111"), GitHub, config.getString("app.github.user_name"), config.getString("app.github.access_token"))
-    Seq(githubAccount)
+    DB readOnly { implicit session: DBSession =>
+      sql"SELECT * FROM git_account WHERE user_account_id = ${userId.value}"
+        .map { rs => gitAccountMap(rs) }.list.apply()
+    }
   }
 
-  override def findOneByUserIdAndGitProviderId(userId: UserId, clientId: GitClientId): Option[GitAccount] = ???
+
+  override def findOneByUserIdAndClientId(userId: UserId, clientId: GitClientId): Option[GitAccount] = {
+    DB readOnly { implicit session: DBSession =>
+      sql"SELECT * FROM git_account WHERE user_account_id = ${userId.value} AND client_id = ${clientId.value}"
+        .map(rs => gitAccountMap(rs)).first().apply()
+    }
+  }
+
+  override def create(gitAccount: GitAccount): Unit = {
+    DB autoCommit {implicit session: DBSession =>
+      sql"INSERT INTO git_account(user_account_id, client_id, user_name, access_token) VALUES (${gitAccount.userId.value}, ${gitAccount.clientId.value}, ${gitAccount.gitUserName}, ${gitAccount.accessToken})"
+        .update().apply()
+    }
+  }
+
+  def gitAccountMap(rs: WrappedResultSet) = new GitAccount(
+    UserId(rs.string("user_id")),
+    GitClientId.getByValue(rs.string("client_id")),
+    rs.string("user_name"),
+    rs.string("access_token")
+  )
 }
