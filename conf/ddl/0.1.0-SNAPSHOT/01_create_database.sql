@@ -1,0 +1,1 @@
+CREATE DATABASE "git_activity_reporter" OWNER postgres;
