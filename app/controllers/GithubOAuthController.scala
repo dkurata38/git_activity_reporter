@@ -3,10 +3,10 @@ package controllers
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-import application.cache.{SignInCache, SignUpCache}
+import application.cache.SignInCache
 import application.coordinator.UserCoordinator
 import application.service.GitAccountService
-import domain.model.git.account.{AccessToken, GitAccount}
+import domain.model.git.account.AccessToken
 import domain.model.git.account.GitClientId.GitHub
 import domain.model.user.RegistrationStatus.Regular
 import javax.inject.{Inject, Singleton}
@@ -44,18 +44,20 @@ class GithubOAuthController @Inject()(config: Configuration, ws: WSClient, cache
       stateCached <- stateCachedOption
     } yield (code, state, stateCached)
 
-    val accessTokenOption = combinedOption.map{t => if (t._2 == t._3) {
+    val accessTokenOption = combinedOption match {
+      case Some(tuple) if tuple._2 == tuple._3 => {
         val url = "https://github.com/login/oauth/access_token"
         val clientId = config.get[String]("app.github.client_id")
         val clientSecret = config.get[String]("app.github.client_secret")
         val futureAccessToken = ws.url(url)
           .addHttpHeaders(("Accept", "application/json"))
-          .addQueryStringParameters(("client_id", clientId), ("client_secret", clientSecret), ("code", t._1))
+          .addQueryStringParameters(("client_id", clientId), ("client_secret", clientSecret), ("code", tuple._1))
           .withRequestTimeout(Duration.apply(10000, TimeUnit.MILLISECONDS))
           .get().map(response => (response.json \ "access_token").as[String])
 
-        Await.result(futureAccessToken, Duration.Inf)
-      } else None[String]
+        Some(Await.result(futureAccessToken, Duration.Inf))
+      }
+      case _ => None
     }
 
 
