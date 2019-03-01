@@ -36,4 +36,11 @@ class GitAccountRepository @Inject() extends IGitAccountRepository {
     rs.string("user_name"),
     AccessToken(rs.string("access_token"))
   )
+
+  override def findByClientIdAndUserName(clientId: GitClientId, userName: String) = {
+    DB readOnly { implicit session: DBSession =>
+      sql"SELECT * FROM git_account WHERE user_name = ${userName} AND client_id = ${clientId.value}"
+        .map(rs => gitAccountMap(rs)).first().apply()
+    }
+  }
 }

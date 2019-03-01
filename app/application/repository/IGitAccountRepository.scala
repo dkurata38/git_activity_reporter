@@ -9,4 +9,6 @@ trait IGitAccountRepository {
   def findOneByUserIdAndClientId(userId: UserId, clientId: GitClientId): Option[GitAccount]
 
   def create(gitAccount: GitAccount)
+
+  def findByClientIdAndUserName(clientId: GitClientId, userName: String) : Option[GitAccount]
 }
