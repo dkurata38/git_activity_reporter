@@ -1,13 +1,27 @@
 @()
 
 @main("Welcome to Play") {
-    <h1>SNSと連携する</h1>
-    <ul>
-        <li>Gitアカウントを連携する</li>
-        <li>SNSアカウントを連携する</li>
-    </ul>
-    <h2></h2>
-    <ul>
-        <li><a href="@routes.TwitterOAuthController.signIn()">Twitter</a></li>
-    </ul>
+    <div class="uk-section">
+        <div class="uk-container uk-container-small">
+            <h1 class="uk-heading-line uk-text-center"><span>Gitと連携してアクティビティをシェアする</span></h1>
+            <ul class="progressbar">
+                <li class="">Link to Git</li>
+                <li class="active">Link to SNS</li>
+                <li>Confirm</li>
+                <li>Done</li>
+            </ul>
+        </div>
+    </div>
+    <div class="uk-section">
+        <div class="uk-container uk-container-small">
+            <div class="uk-child-width-1-3@@s uk-grid-small uk-text-center" uk-grid>
+                <p></p>
+                <div>
+                    <a href="@routes.TwitterOAuthController.signIn()" class="uk-button uk-button-default uk-margin-small-bottom uk-width-1-1@@s">Sign up with Twitter</a>
+                    <button class="uk-button uk-button-default uk-margin-small-bottom uk-width-1-1@@s">Sign up with Bitbucket</button>
+                    <button class="uk-button uk-button-default uk-margin-small-bottom uk-width-1-1@@s">Sign up with GitLub</button>
+                </div>
+            </div>
+        </div>
+    </div>
 }
