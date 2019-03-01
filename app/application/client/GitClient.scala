@@ -6,5 +6,5 @@ import domain.model.git.event.GitEvents
 trait GitClient {
   def getUserEvents(gitAccount: GitAccount): GitEvents
 
-  def getAuthenticatedUser(accessToken: AccessToken): Option[GitAccount]
+  def getAuthenticatedUser(accessToken: AccessToken): GitAccount
 }

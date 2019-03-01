@@ -10,9 +10,7 @@ GET        /signin_callback/twitter        controllers.TwitterOAuthController.si
 GET        /signup/twitter               controllers.TwitterOAuthController.signUp
 GET        /signup_callback/twitter        controllers.TwitterOAuthController.signUpCallback
 GET        /signin/github                 controllers.GithubOAuthController.signIn
-GET        /signin_callback/github         controllers.GithubOAuthController.signUpCallback
-GET        /signup/oauth                 controllers.GithubOAuthController.signUp
-GET        /signup_callback/oauthCallback         controllers.GithubOAuthController.signUpCallback
+GET        /signin_callback/github         controllers.GithubOAuthController.signInCallback
 GET        /signup/git           controllers.SignUpController.linkGit
 GET        /signup/sns           controllers.SignUpController.linkSNS
 GET        /signup/complete           controllers.SignUpController.complete

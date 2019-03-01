@@ -7,8 +7,4 @@ abstract class OAuthController(cache: SyncCacheApi, cc: ControllerComponents) ex
   def signIn(): Action[AnyContent]
 
   def signInCallback(): Action[AnyContent]
-
-  def signUp(): Action[AnyContent]
-
-  def signUpCallback(): Action[AnyContent]
 }

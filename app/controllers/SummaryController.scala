@@ -11,7 +11,7 @@ import play.api.mvc.{AbstractController, AnyContent, ControllerComponents, Reque
 class SummaryController @Inject() (cc:ControllerComponents, gitActivitySummaryCoordinator: GitEventsCoordinator, cache: SyncCacheApi, config: Configuration) extends AbstractController(cc){
   def index = Action { implicit request: Request[AnyContent] =>
     cache.get[SignInCache]("signInCache").map { signInCache =>
-      val gitEvents = gitActivitySummaryCoordinator.getGitEvents(signInCache.userId)
+      val gitEvents = gitActivitySummaryCoordinator.getGitEvents(signInCache.user.userId)
       Ok(views.html.summary.index(gitEvents))
     }.getOrElse(Redirect(routes.HomeController.index()))
   }
