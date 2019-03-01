@@ -5,10 +5,14 @@
 
 # An example controller showing a sample home page
 GET        /                             controllers.HomeController.index
-GET        /twitter/oauth                controllers.TwitterOAuthController.signIn
-GET        /twitter/oauthCallback        controllers.TwitterOAuthController.oauthCallback
-GET        /github/oauth                 controllers.GithubOAuthController.signIn
-GET        /github/oauthCallback         controllers.GithubOAuthController.oauthCallback
+GET        /signin/twitter               controllers.TwitterOAuthController.signIn
+GET        /signin_callback/twitter        controllers.TwitterOAuthController.signInCallback
+GET        /signup/twitter               controllers.TwitterOAuthController.signUp
+GET        /signup_callback/twitter        controllers.TwitterOAuthController.signUpCallback
+GET        /signin/github                 controllers.GithubOAuthController.signIn
+GET        /signin_callback/github         controllers.GithubOAuthController.signUpCallback
+GET        /signup/oauth                 controllers.GithubOAuthController.signUp
+GET        /signup_callback/oauthCallback         controllers.GithubOAuthController.signUpCallback
 GET        /signup/git           controllers.SignUpController.linkGit
 GET        /signup/sns           controllers.SignUpController.linkSNS
 GET        /signup/complete           controllers.SignUpController.complete
