@@ -1,0 +1,53 @@
+/* パターン1 */
+.progressbar {
+    margin: 0;
+    padding: 0;
+    counter-reset: step;
+    z-index: 0;
+    position: relative;
+}
+.progressbar li {
+    list-style-type: none;
+    width: 25%;
+    float: left;
+    font-size: 12px;
+    position: relative;
+    text-align: center;
+    text-transform: uppercase;
+    color: #aaa;
+}
+.progressbar li:before {
+    width: 30px;
+    height: 30px;
+    content: counter(step);
+    counter-increment: step;
+    line-height: 30px;
+    display: block;
+    text-align: center;
+    margin: 0 auto 10px auto;
+    border-radius: 50%;
+    background-color: #eee;
+}
+.progressbar li:after {
+    width: 100%;
+    height: 2px;
+    content: '';
+    position: absolute;
+    background-color: #eee;
+    top: 15px;
+    left: -50%;
+    z-index: -1;
+}
+.progressbar li:first-child:after {
+    content: none;
+}
+.progressbar li.active {
+    color: green;
+}
+.progressbar li.active:before {
+    background-color: #55b776;
+    color:#fff;
+}
+.progressbar li.active + li:after {
+    background-color: #55b776;
+}
