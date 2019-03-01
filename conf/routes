@@ -7,8 +7,6 @@
 GET        /                             controllers.HomeController.index
 GET        /signin/twitter               controllers.TwitterOAuthController.signIn
 GET        /signin_callback/twitter        controllers.TwitterOAuthController.signInCallback
-GET        /signup/twitter               controllers.TwitterOAuthController.signUp
-GET        /signup_callback/twitter        controllers.TwitterOAuthController.signUpCallback
 GET        /signin/github                 controllers.GithubOAuthController.signIn
 GET        /signin_callback/github         controllers.GithubOAuthController.signInCallback
 GET        /signup/git           controllers.SignUpController.linkGit
