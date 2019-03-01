@@ -45,15 +45,10 @@ class GitHubClient extends GitClient {
     new GitEvents(parseEventRecursive(eventPageIterator, Nil))
   }
 
-//  def getRepository(accessToken: AccessToken, repositoryId: GitRepositoryId): String = {
-//    val repositoryService = new RepositoryService(new client.GitHubClient(accessToken.value))
-//    val repository = repositoryService.getRepository(repositoryId.owner, repositoryId.repositoryName)
-//    repository.getHtmlUrl
-//  }
-  override def getAuthenticatedUser(accessToken: AccessToken): Option[GitAccount] = {
+  override def getAuthenticatedUser(accessToken: AccessToken) = {
     val gitHubClient = new client.GitHubClient(accessToken.value)
     val userService = new UserService(gitHubClient)
-  val user = userService.getUser
-  Option(user).map(u => new GitAccount(null, GitHub, user.getName, accessToken))
+    val user = userService.getUser
+    Option(user).map(u => new GitAccount(null, GitHub, user.getName, accessToken)).orNull
   }
 }
