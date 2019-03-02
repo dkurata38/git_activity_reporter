@@ -5,6 +5,7 @@
 
 # An example controller showing a sample home page
 GET        /                             controllers.HomeController.index
+GET        /siginup/index                    controllers.SignUpController.initialize
 GET        /signin/twitter               controllers.TwitterOAuthController.signIn
 GET        /signin_callback/twitter        controllers.TwitterOAuthController.signInCallback
 GET        /signin/github                 controllers.GithubOAuthController.signIn

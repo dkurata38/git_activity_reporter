@@ -46,7 +46,8 @@ class GitHubClient extends GitClient {
   }
 
   override def getAuthenticatedUser(accessToken: AccessToken) = {
-    val gitHubClient = new client.GitHubClient(accessToken.value)
+    val gitHubClient = new client.GitHubClient()
+    gitHubClient.setOAuth2Token(accessToken.value)
     val userService = new UserService(gitHubClient)
     val user = userService.getUser
     Option(user).map(u => new GitAccount(null, GitHub, user.getName, accessToken)).orNull
