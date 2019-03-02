@@ -1,6 +1,6 @@
 package controllers
 
-import application.cache.SignUpCache
+import application.cache.{SignInCache, SignUpCache}
 import application.coordinator.UserCoordinator
 import application.repository.IUserRepository
 import javax.inject.{Inject, Singleton}
@@ -11,14 +11,13 @@ import play.api.mvc.{AbstractController, AnyContent, ControllerComponents, Reque
 @Singleton
 class SignUpController @Inject() (cc: ControllerComponents, cache: SyncCacheApi, repo: IUserRepository, config: Configuration, userCoordinator: UserCoordinator) extends AbstractController(cc){
   def initialize = Action { implicit request: Request[AnyContent] =>
-    cache.remove(config.get[String]("app.signup.cache_name"))
-    val userId = userCoordinator.registerNewUser
-    cache.set(config.get[String]("app.signup.cache_name"), new SignUpCache(userId, None, None))
+    cache.remove(config.get[String]("app.signin.cache_name"))
+    val user = userCoordinator.registerNewUser
+    cache.set(config.get[String]("app.signin.cache_name"), new SignInCache(user))
     Redirect(routes.SignUpController.linkGit())
   }
 
   def linkGit = Action {
-//    repo.create(new GitAccount(UserId("1111"), GitHub, "aaaa", "testtoken"))
     Ok(views.html.signup.git())
   }
 

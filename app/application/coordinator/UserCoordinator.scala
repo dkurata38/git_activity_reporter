@@ -55,10 +55,10 @@ class UserCoordinator @Inject()(private val socialAccountService: SocialAccountS
     }.getOrElse(Left("会員登録/ログインを最初からやり直してください."))
   }
 
-  def registerNewUser: UserId = {
+  def registerNewUser: User = {
     val user = User.newUser
     userService.createUser(user)
-    user.userId
+    user
   }
 
   def activateUser(userId: UserId): UserId = {
