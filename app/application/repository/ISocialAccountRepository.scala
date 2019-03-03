@@ -10,5 +10,5 @@ trait ISocialAccountRepository {
 
   def findOneBySocialAccountId(clientId: SocialClientId, accountId: SocialAccountId): Option[SocialAccount]
 
-  def create(socialAccount: SocialAccount): SocialAccount
+  def create(socialAccount: SocialAccount): Int
 }

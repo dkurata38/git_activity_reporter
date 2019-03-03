@@ -13,5 +13,5 @@ class SocialAccountService @Inject()(private val repository: ISocialAccountRepos
 
   def getBySocialAccountId(clientId: SocialClientId, socialAccountId: SocialAccountId) = repository.findOneBySocialAccountId(clientId, socialAccountId)
 
-  def link(socialAccount: SocialAccount): SocialAccount = repository.create(socialAccount)
+  def link(socialAccount: SocialAccount): Int = repository.create(socialAccount)
 }

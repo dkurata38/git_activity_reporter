@@ -34,7 +34,10 @@ class SocialAccountRepository @Inject() extends ISocialAccountRepository {
     }
   }
 
-  override def create(socialAccount: SocialAccount): SocialAccount = ???
+  override def create(socialAccount: SocialAccount): Int = DB autoCommit { implicit session: DBSession =>
+    sql"INSERT INTO social_account(user_account_id, client_id, user_name, access_token, access_token_secret) VALUES (${socialAccount.userId.value}, ${socialAccount.clientId.value}, ${socialAccount.socialUserId.value}, ${socialAccount.accessToken.token}, ${socialAccount.accessToken.secret})"
+        .update().apply()
+  }
 
   def socialAccountMap(rs: WrappedResultSet) = {
     new SocialAccount(
