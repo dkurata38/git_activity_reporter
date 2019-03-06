@@ -1,10 +1,10 @@
 package application.coordinator
 
-import application.cache.SignInCache
+import application.cache.{SignInCache, SignUpCache}
 import application.service.{GitAccountService, SocialAccountService, UserService}
 import domain.model.git.account.{AccessToken, GitAccount, GitClientId}
 import domain.model.social.{SocialAccessToken, SocialAccount, SocialAccountId, SocialClientId}
-import domain.model.user.{User, UserId}
+import domain.model.user.User
 import javax.inject.{Inject, Singleton}
 
 @Singleton
@@ -29,30 +29,24 @@ class UserCoordinator @Inject()(private val socialAccountService: SocialAccountS
     }
   }
 
-  def signUp(signInCache: SignInCache,clientId: SocialClientId, accountId: SocialAccountId, accessToken: SocialAccessToken): Either[String, SignInCache] = {
-    userService.getById(signInCache.user.userId).map { u =>
-      val socialUser = new SocialAccount(u.userId, clientId, accountId, accessToken)
-      socialAccountService.getBySocialAccountId(clientId, accountId) match {
-        case Some(_) => Left("既に他のユーザでアカウント連携されています. このアカウントで利用するにはサインインをしてください.")
-        case None =>  {
-          socialAccountService.link(socialUser)
-          Right(signInCache.addSocialOauthInfo(clientId, accessToken))
-        }
+  def signUp(signUpCache: SignUpCache, clientId: SocialClientId, accountId: SocialAccountId, accessToken: SocialAccessToken): Either[String, SignUpCache] = {
+    val socialUser = new SocialAccount(signUpCache.user.userId, clientId, accountId, accessToken)
+    socialAccountService.getBySocialAccountId(clientId, accountId) match {
+      case Some(_) => Left("既に他のユーザでアカウント連携されています. このアカウントで利用するにはサインインをしてください.")
+      case None =>  {
+        Right(signUpCache.copy(socialAccount = Some(socialUser)))
       }
-    }.getOrElse(Left("会員登録/ログインを最初からやり直してください."))
+    }
   }
 
-  def signUp(signInCache: SignInCache, clientId: GitClientId, userName: String, accessToken: AccessToken): Either[String, SignInCache] = {
-    userService.getById(signInCache.user.userId).map{u =>
-      val gitUser = new GitAccount(u.userId, clientId, userName, accessToken)
-      gitAccountService.getByClientIdAndUserName(clientId, userName) match {
-        case Some(_) => Left("既に他のユーザでアカウント連携されています. このアカウントで利用するにはサインインをしてください.")
-        case None => {
-          gitAccountService.link(gitUser)
-          Right(signInCache.addGitOauthInfo(clientId, accessToken))
-        }
+  def signUp(signUpCache: SignUpCache, clientId: GitClientId, userName: String, accessToken: AccessToken): Either[String, SignUpCache] = {
+    val gitUser = new GitAccount(signUpCache.user.userId, clientId, userName, accessToken)
+    gitAccountService.getByClientIdAndUserName(clientId, userName) match {
+      case Some(_) => Left("既に他のユーザでアカウント連携されています. このアカウントで利用するにはサインインをしてください.")
+      case None => {
+        Right(signUpCache.copy(gitAccount = Some(gitUser)))
       }
-    }.getOrElse(Left("会員登録/ログインを最初からやり直してください."))
+    }
   }
 
   def registerNewUser: User = {
@@ -61,9 +55,15 @@ class UserCoordinator @Inject()(private val socialAccountService: SocialAccountS
     user
   }
 
-  def activateUser(userId: UserId): UserId = {
-    val user = userService.getById(userId)
-    user.map(u => userService.updateUser(u.activate))
-    user.map(u => u.userId).orNull
+  def activateUser(signUpCache: SignUpCache): Option[String] = {
+    for {
+      gitAccount <- signUpCache.gitAccount
+      socialAccount <-signUpCache.socialAccount
+    } yield {
+      userService.createUser(signUpCache.user.activate)
+      gitAccountService.link(gitAccount)
+      socialAccountService.link(socialAccount)
+      signUpCache.user.userId.value
+    }
   }
 }

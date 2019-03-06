@@ -2,13 +2,11 @@ package controllers
 
 import java.util.concurrent.TimeUnit
 
-import application.cache.{SignInCache, SignUpCache}
+import application.cache.{CacheRepository, SignUpCache}
 import application.coordinator.UserCoordinator
-import domain.model.social.{SocialAccessToken, SocialAccount, SocialAccountId, SocialClientId}
-import domain.model.user.RegistrationStatus.Regular
+import domain.model.social.{SocialAccessToken, SocialAccountId, SocialClientId}
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
-import play.api.cache.SyncCacheApi
 import play.api.mvc.{AnyContent, ControllerComponents, Request}
 import twitter4j.auth.RequestToken
 import twitter4j.{Twitter, TwitterFactory}
@@ -16,60 +14,62 @@ import twitter4j.{Twitter, TwitterFactory}
 import scala.concurrent.duration.Duration
 
 @Singleton
-class TwitterOAuthController @Inject()(cache: SyncCacheApi, cc: ControllerComponents, userCoordinator: UserCoordinator, config: Configuration) extends OAuthController(cache, cc) {
+class TwitterOAuthController @Inject()(cc: ControllerComponents, userCoordinator: UserCoordinator, config: Configuration, cacheRepository: CacheRepository) extends OAuthController(cacheRepository, cc) {
   override def signIn() = Action { implicit request: Request[AnyContent] =>
-    val twitter = new TwitterFactory().getInstance()
-    val requestToken: RequestToken = twitter.getOAuthRequestToken("http://127.0.0.1:9000/signin_callback/twitter")
-
-    cache.set("twitter", twitter, Duration.apply(120, TimeUnit.SECONDS))
-    cache.set("requestToken", requestToken, Duration.apply(120, TimeUnit.SECONDS))
-
-    Redirect(requestToken.getAuthorizationURL)
+    request.session.get(config.get[String]("session.cookieName")).map{sessionKey =>
+      val twitter = new TwitterFactory().getInstance()
+      val requestToken: RequestToken = twitter.getOAuthRequestToken("http://127.0.0.1:9000/signin_callback/twitter")
+      cacheRepository.setCache(sessionKey, "twitter", twitter, Duration.apply(120, TimeUnit.SECONDS))
+      cacheRepository.setCache(sessionKey, "requestToken", requestToken, Duration.apply(120, TimeUnit.SECONDS))
+      Redirect(requestToken.getAuthorizationURL)
+    }.getOrElse(Redirect(routes.HomeController.index()))
   }
 
   override def signInCallback() = Action { implicit request: Request[AnyContent] =>
     request.queryString.get("denied") match {
       case Some(_) => Redirect(routes.HomeController.index())
       case _ => {
-        val twitterOption: Option[Twitter] = cache.get("twitter")
-        val requestTokenOption: Option[RequestToken] = cache.get("requestToken")
+        val sessionKeyOption = request.session.get(config.get[String]("session.cookieName"))
+        val twitterOption = sessionKeyOption.flatMap(sessionKey => cacheRepository.getCache[Twitter](sessionKey, "twitter"))
+        val requestTokenOption = sessionKeyOption.flatMap(sessionKey => cacheRepository.getCache[RequestToken](sessionKey, "requestToken"))
+        val authVerifierOption = request.getQueryString("oauth_verifier")
+        sessionKeyOption.foreach{sessionKey =>
+          cacheRepository.remove(sessionKey, "twitter")
+          cacheRepository.remove(sessionKey, "requestToken")
+        }
 
-        for {
+        val accessTokenOption = for {
           twitter <- twitterOption
           requestToken <- requestTokenOption
-        } yield {
-          val authVerifier: String = request.queryString("oauth_verifier").head
-          val accessToken = twitter.getOAuthAccessToken(requestToken, authVerifier)
-          twitter.verifyCredentials()
-          cache.remove("twitter")
-          cache.remove("requestToken")
+          authVerifier <- authVerifierOption
+        } yield twitter.getOAuthAccessToken(requestToken, authVerifier)
 
-          val signInCacheOption: Option[SignInCache] = cache.get(config.get[String]("app.signin.cache_name"))
-          signInCacheOption match {
+        val sessionKey = sessionKeyOption.get
+        accessTokenOption.map{accessToken =>
+          cacheRepository.getCache[SignUpCache](sessionKey, config.get[String]("app.signup.cache_name")) match {
             case Some(signInCache) => {
               userCoordinator.signUp(
                 signInCache,
                 SocialClientId.Twitter,
                 SocialAccountId(accessToken.getScreenName),
                 SocialAccessToken(accessToken.getToken, accessToken.getTokenSecret)
-              ).foreach{newCache =>
-                cache.set(config.get[String]("app.signin.cache_name"), newCache)
-                signInCache.user.registrationStatus match {
-                  case Regular => Redirect(routes.SummaryController.index())
-                  case _ => Redirect(routes.SignUpController.complete())
+              ) match {
+                case Right(newCache) => {
+                  println("連携成功")
+                  cacheRepository.setCache(sessionKey, config.get[String]("app.signup.cache_name"), newCache)
+                  Redirect(routes.SummaryController.index())
                 }
+                case Left(message) => Redirect(routes.HomeController.index()).flashing(("message", message))
               }
-              Redirect(routes.HomeController.index())
             }
             case _ => {
-              val signInResult = userCoordinator.signIn(
+              userCoordinator.signIn(
                 SocialClientId.Twitter,
                 SocialAccountId(accessToken.getScreenName),
                 SocialAccessToken(accessToken.getToken, accessToken.getTokenSecret)
-              )
-              signInResult match {
+              ) match {
                 case Some(result) => {
-                  cache.set("signInCache", result)
+//                  cache.set(config.get[String]("app.signin.cache_name"), result)
                   Redirect(routes.SummaryController.index())
                 }
                 case _ => {
@@ -78,54 +78,7 @@ class TwitterOAuthController @Inject()(cache: SyncCacheApi, cc: ControllerCompon
               }
             }
           }
-
-        }
-        Redirect(routes.HomeController.index())
-      }
-    }
-  }
-
-  def signUp() = Action { implicit request: Request[AnyContent] =>
-    val twitter = new TwitterFactory().getInstance()
-    val requestToken: RequestToken = twitter.getOAuthRequestToken("http://127.0.0.1:9000/signup_callback/twitter")
-
-    cache.set("twitter", twitter, Duration.apply(120, TimeUnit.SECONDS))
-    cache.set("requestToken", requestToken, Duration.apply(120, TimeUnit.SECONDS))
-
-    Redirect(requestToken.getAuthorizationURL)
-  }
-
-  def signUpCallback() = Action { implicit request: Request[AnyContent] =>
-    request.queryString.get("denied") match {
-      case Some(_) => Redirect("/")
-      case _ => {
-        val twitterOption: Option[Twitter] = cache.get("twitter")
-        val requestTokenOption: Option[RequestToken] = cache.get("requestToken")
-        for {
-          twitter <- twitterOption
-          requestToken <- requestTokenOption
-        } yield {
-          val authVerifier: String = request.queryString("oauth_verifier").head
-          val accessToken = twitter.getOAuthAccessToken(requestToken, authVerifier)
-          twitter.verifyCredentials()
-          cache.remove("twitter")
-          cache.remove("requestToken")
-
-          val signUpCacheOption: Option[SignUpCache] = cache.get(config.get[String]("app.signup.cache_name"))
-          signUpCacheOption.foreach {
-            e =>
-              e.socialAccount = Some(
-                new SocialAccount(
-                  e.userId,
-                  SocialClientId.Twitter,
-                  SocialAccountId(accessToken.getScreenName),
-                  SocialAccessToken(accessToken.getToken, accessToken.getTokenSecret)
-                )
-              )
-              Redirect(routes.SignUpController.complete)
-          }
-        }
-        Redirect(routes.HomeController.index())
+        }.getOrElse(Redirect(routes.HomeController.index()))
       }
     }
   }

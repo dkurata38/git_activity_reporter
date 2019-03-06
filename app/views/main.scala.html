@@ -4,7 +4,7 @@
 * two arguments, a `String` for the title of the page and an `Html`
 * object to insert into the body of the page.
 *@
-@(title: String)(content: Html)
+@(title: String)(content: Html)(implicit flash: Flash = Flash())
 
 <!DOCTYPE html>
 <html lang="en">
@@ -19,6 +19,7 @@
         <script src="@routes.Assets.versioned("javascripts/uikit-icons.min.js")"></script>
     </head>
     <body>
+        @flash.get("message").orNull
         @* And here's where we render the `Html` object containing
         * the page content. *@
         @content
