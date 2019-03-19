@@ -6,7 +6,7 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class UserService @Inject()(private val repository: IUserRepository) {
-  def createUser(user: User): Int = repository.create(user)
+  def create(user: User) = repository.create(user)
 
   def getById(userId: UserId): Option[User] = repository.findOneById(userId)
 

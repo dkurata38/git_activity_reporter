@@ -9,8 +9,7 @@ class User(val userId: UserId, val registrationStatus: RegistrationStatus) {
 }
 
 object User {
-  def newUser: User = {
-    val userId = UserId.newId
-    new User(userId, Temporary)
+  def createInstance: User = {
+    new User(UserId.newId, Temporary)
   }
 }

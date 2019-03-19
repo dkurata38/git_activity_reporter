@@ -13,7 +13,9 @@ class SignUpController @Inject() (cc: ControllerComponents, repo: IUserRepositor
     request.session.get(config.get[String]("session.cookieName")).map { sessionKey =>
       val cacheName = config.get[String]("app.siginup.cache_name")
       cacheRepository.remove(sessionKey, cacheName)
-      cacheRepository.setCache(sessionKey, cacheName, SignUpCache.createInstance)
+
+      val user = userCoordinator.registerTemporaryUser
+      cacheRepository.setCache(sessionKey, cacheName, SignUpCache.createInstance(user.userId))
       Redirect(routes.SignUpController.linkGit())
     }.getOrElse(Redirect(routes.HomeController.index()).flashing(("message", "セッション有効期限切れ")))
   }
@@ -30,8 +32,8 @@ class SignUpController @Inject() (cc: ControllerComponents, repo: IUserRepositor
     request.session.get(config.get[String]("session.cookieName")).flatMap{sessionKey =>
       cacheRepository.getCache[SignUpCache](sessionKey, config.get[String]("app.signin.cache_name")).flatMap{signUpCache =>
         val accessTokenOption = userCoordinator.activateUser(signUpCache)
-        accessTokenOption.map(accessToken => Redirect(routes.SummaryController.index()).withSession(("accessToken", accessToken)))
+        accessTokenOption.map(accessToken => Redirect(routes.SummaryController.index()).withSession(("accessToken", accessToken.value)))
       }
-    }getOrElse(Redirect(routes.HomeController.index()))
+    }.getOrElse(Redirect(routes.HomeController.index()))
   }
 }

@@ -2,16 +2,16 @@ package application.cache
 
 import domain.model.git.account.GitAccount
 import domain.model.social.SocialAccount
-import domain.model.user.User
+import domain.model.user.UserId
 
-case class SignUpCache(user: User, gitAccount: Option[GitAccount] = None, socialAccount: Option[SocialAccount] = None) {
+case class SignUpCache(userId: UserId, gitAccount: Option[GitAccount] = None, socialAccount: Option[SocialAccount] = None) {
   def cacheGitAccount(gitAccount: GitAccount) = copy(gitAccount = Some(gitAccount))
 
   def cacheSocialAccount(socialAccount: SocialAccount) = copy(socialAccount = Some(socialAccount))
 }
 
 object SignUpCache {
-  def createInstance = SignUpCache(User.newUser)
+  def createInstance(userId: UserId) = SignUpCache(userId)
 }
 
 
