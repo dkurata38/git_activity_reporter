@@ -13,7 +13,7 @@ class User(val userId: UserId, val registrationStatus: RegistrationStatus) {
 
 object User {
   def createTemporaryUser(implicit userRepository: UserRepository): User = {
-    val user = User(UserId.newId, Temporary)
+    val user = new User(UserId.newId, Temporary)
     userRepository.create(user)
     user
   }

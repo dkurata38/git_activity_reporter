@@ -10,7 +10,7 @@ class CacheRepository @Inject() (private val cacheApi: SyncCacheApi) {
   def setCache(sessionKey :String, attributeKey: String, value: Any, duration: Duration = Duration.Inf) = cacheApi.set(sessionKey, getCacheAsMap(sessionKey) + ((attributeKey, value)), duration)
 
   def getCache[T](sessionKey: String, attributeKey: String) = getCacheAsMap(sessionKey: String).get(attributeKey).flatMap {
-    case m if m.isInstanceOf[T] => Some(m.asInstanceOf[T])
+    case m: T => Some(m.asInstanceOf[T])
     case _ => None
   }
 

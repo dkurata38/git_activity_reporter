@@ -2,7 +2,6 @@ package adapter.web.controllers
 
 import application.inputport.GitActivityQueryUseCaseInputPort
 import application.service.UserTokenService
-import controllers.routes
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.cache.SyncCacheApi

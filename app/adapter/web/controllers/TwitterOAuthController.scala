@@ -4,7 +4,6 @@ import java.util.concurrent.TimeUnit
 
 import application.cache.{CacheRepository, SignUpCache}
 import application.inputport.{LinkSocialAccountUseCaseInputPort, UserSignInUseCaseInputPort}
-import controllers.routes
 import domain.social.SocialClientId
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
