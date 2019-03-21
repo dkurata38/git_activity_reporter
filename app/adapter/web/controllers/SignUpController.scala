@@ -1,8 +1,7 @@
 package adapter.web.controllers
 
 import application.cache.{CacheRepository, SignUpCache}
-import application.coordinator.UserCoordinator
-import application.inputport.UserActivationUseCaseInputPort
+import application.inputport.{RegisterTemporaryUserUseCaseInputPort, UserActivationUseCaseInputPort}
 import application.repository.IUserRepository
 import controllers.routes
 import javax.inject.{Inject, Singleton}
@@ -10,13 +9,13 @@ import play.api.Configuration
 import play.api.mvc.{AbstractController, AnyContent, ControllerComponents, Request}
 
 @Singleton
-class SignUpController @Inject() (cc: ControllerComponents, repo: IUserRepository, config: Configuration, userCoordinator: UserCoordinator, cacheRepository: CacheRepository, userActivationUseCaseInputPort: UserActivationUseCaseInputPort) extends AbstractController(cc){
+class SignUpController @Inject() (cc: ControllerComponents, repo: IUserRepository, config: Configuration, cacheRepository: CacheRepository, userActivationUseCaseInputPort: UserActivationUseCaseInputPort, registerTemporaryUserUseCaseInputPort: RegisterTemporaryUserUseCaseInputPort) extends AbstractController(cc){
   def initialize = Action { implicit request: Request[AnyContent] =>
     request.session.get(config.get[String]("session.cookieName")).map { sessionKey =>
       val cacheName = config.get[String]("app.siginup.cache_name")
       cacheRepository.remove(sessionKey, cacheName)
 
-      val user = userCoordinator.registerTemporaryUser
+      val user = registerTemporaryUserUseCaseInputPort.register
       cacheRepository.setCache(sessionKey, cacheName, SignUpCache.createInstance(user.userId))
       Redirect(routes.SignUpController.linkGit())
     }.getOrElse(Redirect(routes.HomeController.index()).flashing(("message", "セッション有効期限切れ")))
