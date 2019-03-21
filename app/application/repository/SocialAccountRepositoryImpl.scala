@@ -1,12 +1,14 @@
-package infrastracture.repository.social_account
+package application.repository
 
+import adapter.gateway.twitter.TwitterUserGateway
+import domain.model.social.SocialClientId.Twitter
 import domain.model.social._
 import domain.model.user.UserId
 import javax.inject.{Inject, Singleton}
 import scalikejdbc._
 
 @Singleton
-class SocialAccountRepository @Inject() extends ISocialAccountRepository {
+class SocialAccountRepositoryImpl @Inject() (private val twitterUserGateway: TwitterUserGateway) extends SocialAccountRepository {
   override def findAllByUserId(userId: UserId): Seq[SocialAccount] = {
     DB readOnly{ implicit session: DBSession =>
       sql"SELECT * FROM social_account WHERE user_account_id = ${userId.value}"
@@ -45,5 +47,10 @@ class SocialAccountRepository @Inject() extends ISocialAccountRepository {
       SocialAccountId(rs.get("user_name")),
       SocialAccessToken(rs.string("access_token"), rs.string("access_token_secret"))
     )
+  }
+
+  override def getUserFromClient(clientId: SocialClientId, accessToken: SocialAccessToken): SocialAccount = clientId match {
+    case Twitter => twitterUserGateway.getUser(accessToken.token, accessToken.secret)
+    case _ => ???
   }
 }

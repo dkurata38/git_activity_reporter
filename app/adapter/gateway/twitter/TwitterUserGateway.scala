@@ -1,5 +1,7 @@
 package adapter.gateway.twitter
 
-class TwitterUserGateway {
+import domain.model.social.SocialAccount
 
+trait TwitterUserGateway {
+  def getUser(accessToken: String, accessTokenSecret: String): SocialAccount
 }
