@@ -1,4 +1,4 @@
-package controllers
+package adapter.web.controllers
 
 import application.cache.CacheRepository
 import play.api.mvc._

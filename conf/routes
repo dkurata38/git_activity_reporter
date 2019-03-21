@@ -4,16 +4,17 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET        /                             controllers.HomeController.index
-GET        /siginup/index                    controllers.SignUpController.initialize
-GET        /signin/twitter               controllers.TwitterOAuthController.signIn
-GET        /signin_callback/twitter        controllers.TwitterOAuthController.signInCallback
-GET        /signin/github                 controllers.GithubOAuthController.signIn
-GET        /signin_callback/github         controllers.GithubOAuthController.signInCallback
-GET        /signup/git           controllers.SignUpController.linkGit
-GET        /signup/sns           controllers.SignUpController.linkSNS
-GET        /signup/complete           controllers.SignUpController.complete
-GET         /summary/index      controllers.SummaryController.index
+GET        /                             adapter.web.controllers.HomeController.index
+GET        /siginup/index                    adapter.web.controllers.SignUpController.initialize
+GET        /signin/twitter               adapter.web.controllers.TwitterOAuthController.signIn
+GET        /signin_callback/twitter        adapter.web.controllers.TwitterOAuthController.signInCallback
+GET        /signin/github                 adapter.web.controllers.GithubOAuthController.signIn
+GET        /signin_callback/github         adapter.web.controllers.GithubOAuthController.signInCallback
+GET        /signup/git           adapter.web.controllers.SignUpController.linkGit
+GET        /signup/sns           adapter.web.controllers.SignUpController.linkSNS
+GET        /signup/complete           adapter.web.controllers.SignUpController.complete
+GET         /summary/index      adapter.web.controllers.SummaryController.index
+#GET         /signin/:clientId
 
 # Map static resources from the /public folder to the /assets URL path
 GET        /assets/*file                 controllers.Assets.versioned(path="/public", file: Asset)

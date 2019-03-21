@@ -1,9 +1,10 @@
-package controllers
+package adapter.web.controllers
 
 import application.cache.{CacheRepository, SignUpCache}
 import application.coordinator.UserCoordinator
 import application.inputport.UserActivationUseCaseInputPort
 import application.repository.IUserRepository
+import controllers.routes
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.mvc.{AbstractController, AnyContent, ControllerComponents, Request}
