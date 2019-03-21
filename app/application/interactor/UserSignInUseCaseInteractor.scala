@@ -3,14 +3,16 @@ package application.interactor
 import application.inputport.UserSignInUseCaseInputPort
 import application.repository.IUserTokenRepository
 import domain.model.git.account.{AccessToken, GitAccountRepository, GitClientId}
-import domain.model.social.SocialClientId
+import domain.model.social.SocialClientId.Twitter
+import domain.model.social.{SocialAccessToken, SocialAccountRepository, SocialClientId}
 import domain.model.user_token.{Token, UserToken}
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class UserSignInUseCaseInteractor @Inject() (
       implicit private val userTokenRepository: IUserTokenRepository,
-      private val gitAccountRepository: GitAccountRepository) extends UserSignInUseCaseInputPort{
+      private val gitAccountRepository: GitAccountRepository,
+      private val socialAccountRepository: SocialAccountRepository) extends UserSignInUseCaseInputPort{
   override def signInWith(clientId: GitClientId, accessToken: String): Either[String, Token] = {
     val gitAccount = gitAccountRepository.getUserFromClient(clientId, AccessToken(accessToken))
     gitAccountRepository.findByClientIdAndUserName(clientId, gitAccount.gitUserName).map{ u =>
@@ -18,5 +20,10 @@ class UserSignInUseCaseInteractor @Inject() (
     }.getOrElse(Left(""))
   }
 
-  override def signInWith(clientId: SocialClientId, accessToken: String): Either[String, Token] = ???
+  override def signInWith(clientId: SocialClientId, accessToken: String, accessTokenSecret: String): Either[String, Token] = {
+    val socialAccount = socialAccountRepository.getUserFromClient(Twitter, SocialAccessToken(accessToken, accessTokenSecret))
+    socialAccountRepository.findOneBySocialAccountId(clientId, socialAccount.socialUserId).map{ u =>
+      Right(UserToken.issueTo(u.userId).token)
+    }.getOrElse(Left(""))
+  }
 }

@@ -4,6 +4,7 @@ import java.util.concurrent.TimeUnit
 
 import application.cache.{CacheRepository, SignUpCache}
 import application.coordinator.UserCoordinator
+import application.inputport.UserSignInUseCaseInputPort
 import domain.model.social.{SocialAccessToken, SocialAccountId, SocialClientId}
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
@@ -14,7 +15,7 @@ import twitter4j.{Twitter, TwitterFactory}
 import scala.concurrent.duration.Duration
 
 @Singleton
-class TwitterOAuthController @Inject()(cc: ControllerComponents, userCoordinator: UserCoordinator, config: Configuration, cacheRepository: CacheRepository) extends OAuthController(cacheRepository, cc) {
+class TwitterOAuthController @Inject()(cc: ControllerComponents, userCoordinator: UserCoordinator, config: Configuration, cacheRepository: CacheRepository, userSignInUseCaseInputPort: UserSignInUseCaseInputPort) extends OAuthController(cacheRepository, cc) {
   override def signIn() = Action { implicit request: Request[AnyContent] =>
     request.session.get(config.get[String]("session.cookieName")).map{sessionKey =>
       val twitter = new TwitterFactory().getInstance()
@@ -63,12 +64,9 @@ class TwitterOAuthController @Inject()(cc: ControllerComponents, userCoordinator
               }
             }
             case _ => {
-              userCoordinator.signIn(
-                SocialClientId.Twitter,
-                SocialAccountId(accessToken.getScreenName),
-                SocialAccessToken(accessToken.getToken, accessToken.getTokenSecret)
-              ) match {
-                case Some(result) => {
+              userSignInUseCaseInputPort.signInWith(SocialClientId.Twitter, accessToken.getToken(), accessToken.getTokenSecret())
+              match {
+                case Right(result) => {
 //                  cache.set(config.get[String]("app.signin.cache_name"), result)
                   Redirect(routes.SummaryController.index())
                 }
