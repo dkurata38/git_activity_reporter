@@ -49,7 +49,7 @@ class SocialAccountRepositoryImpl @Inject() (private val twitterUserGateway: Twi
     )
   }
 
-  override def getUserFromClient(clientId: SocialClientId, accessToken: SocialAccessToken): SocialAccount = clientId match {
+  override def getUserFromClient(clientId: SocialClientId, accessToken: SocialAccessToken): Option[SocialAccount] = clientId match {
     case Twitter => twitterUserGateway.getUser(accessToken.token, accessToken.secret)
     case _ => ???
   }

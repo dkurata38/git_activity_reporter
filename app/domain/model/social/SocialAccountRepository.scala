@@ -11,5 +11,5 @@ trait SocialAccountRepository {
 
   def create(socialAccount: SocialAccount): Int
 
-  def getUserFromClient(clientId: SocialClientId, accessToken: SocialAccessToken): SocialAccount
+  def getUserFromClient(clientId: SocialClientId, accessToken: SocialAccessToken): Option[SocialAccount]
 }
