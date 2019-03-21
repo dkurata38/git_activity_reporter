@@ -1,9 +1,10 @@
-package application.repository
+package domain.model.git.account
 
-import domain.model.git.account.{GitAccount, GitClientId}
 import domain.model.user.UserId
 
-trait IGitAccountRepository {
+trait GitAccountRepository {
+  def getUserFromClient(clientId: GitClientId, accessToken: AccessToken): GitAccount
+
   def findAllByUserId(userId: UserId): Seq[GitAccount]
 
   def findOneByUserIdAndClientId(userId: UserId, clientId: GitClientId): Option[GitAccount]

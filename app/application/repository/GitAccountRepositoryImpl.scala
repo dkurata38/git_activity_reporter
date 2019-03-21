@@ -1,13 +1,14 @@
-package infrastracture.repository.git_account
+package application.repository
 
-import application.repository.IGitAccountRepository
-import domain.model.git.account.{AccessToken, GitAccount, GitClientId}
+import adapter.gateway.GitHubUserGateway
+import domain.model.git.account.GitClientId.GitHub
+import domain.model.git.account.{AccessToken, GitAccount, GitAccountRepository, GitClientId}
 import domain.model.user.UserId
 import javax.inject.{Inject, Singleton}
-import scalikejdbc._
+import scalikejdbc.{DB, DBSession, _}
 
 @Singleton
-class GitAccountRepository @Inject() extends IGitAccountRepository {
+class GitAccountRepositoryImpl @Inject() (private implicit val gitHubUserGateway: GitHubUserGateway) extends GitAccountRepository {
   override def findAllByUserId(userId: UserId): Seq[GitAccount] = {
     DB readOnly { implicit session: DBSession =>
       sql"SELECT * FROM git_account WHERE user_account_id = ${userId.value}"
@@ -42,5 +43,9 @@ class GitAccountRepository @Inject() extends IGitAccountRepository {
       sql"SELECT * FROM git_account WHERE user_name = ${userName} AND client_id = ${clientId.value}"
         .map(rs => gitAccountMap(rs)).first().apply()
     }
+  }
+  override def getUserFromClient(clientId: GitClientId, accessToken: AccessToken): GitAccount = clientId match {
+    case GitHub => gitHubUserGateway.getUser(accessToken)
+    case _ => ???
   }
 }

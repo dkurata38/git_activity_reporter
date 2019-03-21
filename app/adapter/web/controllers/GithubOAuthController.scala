@@ -5,8 +5,8 @@ import java.util.concurrent.TimeUnit
 
 import application.cache.{CacheRepository, SignUpCache}
 import application.coordinator.UserCoordinator
+import application.inputport.LinkGitAccountUseCaseInputPort
 import application.service.GitAccountService
-import domain.model.git.account.AccessToken
 import domain.model.git.account.GitClientId.GitHub
 import javax.inject.{Inject, Singleton}
 import play.api.libs.ws.WSClient
@@ -18,7 +18,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 
 @Singleton
-class GithubOAuthController @Inject()(config: Configuration, ws: WSClient, cacheRepository: CacheRepository, cc: ControllerComponents, gitAccountService: GitAccountService, userCoordinator: UserCoordinator) extends OAuthController(cacheRepository, cc) {
+class GithubOAuthController @Inject()(config: Configuration, ws: WSClient, cacheRepository: CacheRepository, cc: ControllerComponents, gitAccountService: GitAccountService, userCoordinator: UserCoordinator, gitAccountOauthUseCaseInputPort: LinkGitAccountUseCaseInputPort) extends OAuthController(cacheRepository, cc) {
 
   val logger = Logger(classOf[GithubOAuthController])
 
@@ -52,10 +52,9 @@ class GithubOAuthController @Inject()(config: Configuration, ws: WSClient, cache
       println("accessToken取得成功")
       cacheRepository.getCache[SignUpCache](sessionKey, config.get[String]("app.signup.cache_name")).map { signUpCache =>
         println("signUpCache有")
-        val gitUser = gitAccountService.getAuthenticatedUser(GitHub, AccessToken(accessToken))
-        userCoordinator.signUp(signUpCache, GitHub, gitUser.gitUserName, AccessToken(accessToken)) match {
-          case Right(newCache) => {
-            cacheRepository.setCache(sessionKey, config.get[String]("app.signup.cache_name"), newCache)
+        gitAccountOauthUseCaseInputPort.link(sessionKey, GitHub, accessToken) match {
+          case Right(gitAccount) => {
+            cacheRepository.setCache(sessionKey, config.get[String]("app.signup.cache_name"), signUpCache.cacheGitAccount(gitAccount))
             println("サインイン")
             Redirect(routes.SummaryController.index())
           }

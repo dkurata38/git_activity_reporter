@@ -21,17 +21,12 @@ class GitHubActivitiesGatewayImpl @Inject()(gitHubUserGateway: GitHubUserGateway
   override def getUserEvents(accessToken: AccessToken, from: LocalDate, to: LocalDate): GitActivities = {
     val gitHubClient = new GitHubClient()
     gitHubClient.setOAuth2Token(accessToken.value)
-    Option(new UserService(gitHubClient).getUser).map {gitUser =>
-      val eventPageIterator = new EventService(gitHubClient).pageUserEvents(gitUser.getName)
-      parseEventRecursive(eventPageIterator)
-    }.getOrElse(GitActivities.empty())
 
     @tailrec
     def parseEventRecursive(eventPageIterator: PageIterator[Event], initEvents: GitActivities = GitActivities.empty()): GitActivities = {
       if (!eventPageIterator.hasNext) {
         return initEvents
       }
-
       val events = initEvents ++ eventPageIterator.next().asScala
         .filter(e => LocalDateTime.ofInstant(e.getCreatedAt.toInstant, ZoneId.systemDefault()).toLocalDate.isAfter(LocalDate.now().minusDays(7)))
         .filter(e => e.getType == "PushEvent")
@@ -39,6 +34,11 @@ class GitHubActivitiesGatewayImpl @Inject()(gitHubUserGateway: GitHubUserGateway
         .foldLeft(initEvents)((activities, activity) => activities + activity)
       parseEventRecursive(eventPageIterator, events)
     }
+
+    Option(new UserService(gitHubClient).getUser).map {gitUser =>
+      val eventPageIterator = new EventService(gitHubClient).pageUserEvents(gitUser.getName)
+      parseEventRecursive(eventPageIterator)
+    }.getOrElse(GitActivities.empty())
   }
 
   override def getUser(accessToken: AccessToken) = {

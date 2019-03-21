@@ -1,5 +1,7 @@
 package domain.model.git.activity
 
+import domain.model.git.activity.GitActivityType.Push
+
 class GitActivities(private val values: Seq[GitActivity]) {
   def countByRepositoryAndEventType() = {
 
