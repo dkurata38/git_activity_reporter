@@ -1,4 +1,4 @@
-package domain.model.git.event
+package domain.model.git.activity
 
 import domain.model.git.account.GitClientId
 

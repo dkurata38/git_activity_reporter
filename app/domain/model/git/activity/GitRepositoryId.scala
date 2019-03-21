@@ -1,4 +1,4 @@
-package domain.model.git.event
+package domain.model.git.activity
 
 case class GitRepositoryId(value: String) {
   def owner: String = value.split("/").apply(0)
