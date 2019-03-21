@@ -1,18 +1,17 @@
 package application.interactor
 
 import application.inputport.UserSignInUseCaseInputPort
-import application.repository.IUserTokenRepository
 import domain.model.git.account.{AccessToken, GitAccountRepository, GitClientId}
 import domain.model.social.SocialClientId.Twitter
 import domain.model.social.{SocialAccessToken, SocialAccountRepository, SocialClientId}
-import domain.model.user_token.{Token, UserToken}
+import domain.model.user_token.{Token, UserToken, UserTokenRepository}
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class UserSignInUseCaseInteractor @Inject() (
-      implicit private val userTokenRepository: IUserTokenRepository,
-      private val gitAccountRepository: GitAccountRepository,
-      private val socialAccountRepository: SocialAccountRepository) extends UserSignInUseCaseInputPort{
+                                              implicit private val userTokenRepository: UserTokenRepository,
+                                              private val gitAccountRepository: GitAccountRepository,
+                                              private val socialAccountRepository: SocialAccountRepository) extends UserSignInUseCaseInputPort{
   override def signInWith(clientId: GitClientId, accessToken: String): Either[String, Token] = {
     val gitAccount = gitAccountRepository.getUserFromClient(clientId, AccessToken(accessToken))
     gitAccountRepository.findByClientIdAndUserName(clientId, gitAccount.gitUserName).map{ u =>

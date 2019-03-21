@@ -1,13 +1,12 @@
-package infrastracture.repository
+package application.repository
 
-import application.repository.IUserTokenRepository
 import domain.model.user.UserId
-import domain.model.user_token.{Token, UserToken}
+import domain.model.user_token.{Token, UserToken, UserTokenRepository}
 import javax.inject.{Inject, Singleton}
 import scalikejdbc.{DB, DBSession, _}
 
 @Singleton
-class UserTokenRepository @Inject() extends IUserTokenRepository{
+class UserTokenRepositoryImpl @Inject() extends UserTokenRepository{
   override def findByUserId(userId: UserId): Option[UserToken] =
     DB readOnly {implicit session: DBSession =>
       sql"SELECT user_account_id, token FROM user_token WHERE user_account_id = ${userId.value}"

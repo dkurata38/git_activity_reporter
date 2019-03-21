@@ -1,11 +1,10 @@
 package application.interactor
 
 import application.inputport.RegisterTemporaryUserUseCaseInputPort
-import application.repository.IUserRepository
-import domain.model.user.User
+import domain.model.user.{User, UserRepository}
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class RegisterTemporaryUserUseCaseInteractor @Inject()(implicit private val userRepository: IUserRepository) extends RegisterTemporaryUserUseCaseInputPort{
+class RegisterTemporaryUserUseCaseInteractor @Inject()(implicit private val userRepository: UserRepository) extends RegisterTemporaryUserUseCaseInputPort{
   override def register: User = User.createTemporaryUser
 }

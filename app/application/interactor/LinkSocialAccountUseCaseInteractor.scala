@@ -1,15 +1,14 @@
 package application.interactor
 
 import application.inputport.LinkSocialAccountUseCaseInputPort
-import application.repository.IUserTokenRepository
 import domain.model.social.{SocialAccessToken, SocialAccount, SocialAccountRepository, SocialClientId}
-import domain.model.user_token.Token
+import domain.model.user_token.{Token, UserTokenRepository}
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class LinkSocialAccountUseCaseInteractor @Inject() (
-                                                   private val userTokenRepository: IUserTokenRepository,
-                                                   private val socialAccountRepository: SocialAccountRepository
+                                                     private val userTokenRepository: UserTokenRepository,
+                                                     private val socialAccountRepository: SocialAccountRepository
                                                    ) extends LinkSocialAccountUseCaseInputPort{
   override def link(token: String, clientId: SocialClientId, accessToken: String, accessTokenSecret: String): Either[String, SocialAccount] = {
     userTokenRepository.findByUserToken(Token(token)).flatMap(userToken =>

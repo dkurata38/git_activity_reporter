@@ -1,8 +1,6 @@
-package application.repository
+package domain.model.user
 
-import domain.model.user.{User, UserId}
-
-trait IUserRepository {
+trait UserRepository {
   def create(user: User): Int
 
   def findOneById(userId: UserId): Option[User]

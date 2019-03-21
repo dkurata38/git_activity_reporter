@@ -1,9 +1,8 @@
-package application.repository
+package domain.model.user_token
 
 import domain.model.user.UserId
-import domain.model.user_token.{Token, UserToken}
 
-trait IUserTokenRepository {
+trait UserTokenRepository {
   def findByUserId(userId: UserId): Option[UserToken]
 
   def findByUserToken(token: Token): Option[UserToken]

@@ -2,14 +2,14 @@ package adapter.web.controllers
 
 import application.cache.{CacheRepository, SignUpCache}
 import application.inputport.{RegisterTemporaryUserUseCaseInputPort, UserActivationUseCaseInputPort}
-import application.repository.IUserRepository
 import controllers.routes
+import domain.model.user.UserRepository
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.mvc.{AbstractController, AnyContent, ControllerComponents, Request}
 
 @Singleton
-class SignUpController @Inject() (cc: ControllerComponents, repo: IUserRepository, config: Configuration, cacheRepository: CacheRepository, userActivationUseCaseInputPort: UserActivationUseCaseInputPort, registerTemporaryUserUseCaseInputPort: RegisterTemporaryUserUseCaseInputPort) extends AbstractController(cc){
+class SignUpController @Inject() (cc: ControllerComponents, repo: UserRepository, config: Configuration, cacheRepository: CacheRepository, userActivationUseCaseInputPort: UserActivationUseCaseInputPort, registerTemporaryUserUseCaseInputPort: RegisterTemporaryUserUseCaseInputPort) extends AbstractController(cc){
   def initialize = Action { implicit request: Request[AnyContent] =>
     request.session.get(config.get[String]("session.cookieName")).map { sessionKey =>
       val cacheName = config.get[String]("app.siginup.cache_name")

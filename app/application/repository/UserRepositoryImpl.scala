@@ -1,12 +1,11 @@
-package infrastracture.repository
+package application.repository
 
-import application.repository.IUserRepository
-import domain.model.user.{RegistrationStatus, User, UserId}
+import domain.model.user.{RegistrationStatus, User, UserId, UserRepository}
 import javax.inject.{Inject, Singleton}
 import scalikejdbc.{DB, DBSession, _}
 
 @Singleton
-class UserRepository @Inject() extends IUserRepository {
+class UserRepositoryImpl @Inject() extends UserRepository {
   override def create(user: User) = {
     DB autoCommit {implicit session: DBSession =>
       sql"INSERT INTO user_account(id, registration_status) VALUES (${user.userId.value}, ${user.registrationStatus.value})"
