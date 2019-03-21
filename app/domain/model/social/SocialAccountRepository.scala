@@ -1,9 +1,8 @@
-package application.repository
+package domain.model.social
 
-import domain.model.social.{SocialAccount, SocialAccountId, SocialClientId}
 import domain.model.user.UserId
 
-trait ISocialAccountRepository {
+trait SocialAccountRepository {
   def findAllByUserId(userId: UserId): Seq[SocialAccount]
 
   def findOneByUserIdAndSocialClientId(userId: UserId, clientId: SocialClientId): Option[SocialAccount]
@@ -11,4 +10,6 @@ trait ISocialAccountRepository {
   def findOneBySocialAccountId(clientId: SocialClientId, accountId: SocialAccountId): Option[SocialAccount]
 
   def create(socialAccount: SocialAccount): Int
+
+  def getUserFromClient(clientId: SocialClientId, accessToken: SocialAccessToken): SocialAccount
 }

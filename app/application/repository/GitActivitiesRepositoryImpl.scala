@@ -2,7 +2,7 @@ package application.repository
 
 import java.time.LocalDate
 
-import adapter.gateway.GitHubActivitiesGateway
+import adapter.gateway.github.GitHubActivitiesGateway
 import domain.model.git.account.GitAccount
 import domain.model.git.account.GitClientId.GitHub
 import domain.model.git.activity.{GitActivities, GitActivitiesRepository}

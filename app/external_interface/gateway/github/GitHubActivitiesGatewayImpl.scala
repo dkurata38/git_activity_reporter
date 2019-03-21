@@ -1,8 +1,8 @@
-package external_interface.gateway
+package external_interface.gateway.github
 
 import java.time.{LocalDate, LocalDateTime, ZoneId}
 
-import adapter.gateway.{GitHubActivitiesGateway, GitHubUserGateway}
+import adapter.gateway.github.{GitHubActivitiesGateway, GitHubUserGateway}
 import domain.model.git.account.GitClientId.GitHub
 import domain.model.git.account.{AccessToken, GitAccount}
 import domain.model.git.activity.GitActivityType.Push

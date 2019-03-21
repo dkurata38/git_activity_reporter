@@ -1,6 +1,6 @@
 package application.repository
 
-import adapter.gateway.GitHubUserGateway
+import adapter.gateway.github.GitHubUserGateway
 import domain.model.git.account.GitClientId.GitHub
 import domain.model.git.account.{AccessToken, GitAccount, GitAccountRepository, GitClientId}
 import domain.model.user.UserId

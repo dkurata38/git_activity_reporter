@@ -1,4 +1,4 @@
-package adapter.gateway
+package adapter.gateway.github
 
 import domain.model.git.account.{AccessToken, GitAccount}
 

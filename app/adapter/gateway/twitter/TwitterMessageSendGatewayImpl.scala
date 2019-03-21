@@ -1,7 +1,7 @@
-package application.client
+package adapter.gateway.twitter
 
 import domain.model.social.{SocialAccount, SocialMessage}
 
-trait SocialMessageSendClient {
+trait TwitterMessageSendGatewayImpl {
   def send(socialAccount: SocialAccount, socialMessage: SocialMessage): Unit
 }
