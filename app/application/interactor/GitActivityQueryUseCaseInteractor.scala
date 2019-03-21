@@ -3,9 +3,9 @@ package application.interactor
 import java.time.LocalDate
 
 import application.inputport.GitActivityQueryUseCaseInputPort
-import domain.model.git.account.{GitAccount, GitAccountRepository}
-import domain.model.git.activity.{GitActivities, GitActivitiesRepository}
-import domain.model.user_token.{Token, UserTokenRepository}
+import domain.git_account.{GitAccount, GitAccountRepository}
+import domain.git_activity.{GitActivities, GitActivitiesRepository}
+import domain.user_token.{Token, UserTokenRepository}
 import javax.inject.{Inject, Singleton}
 
 @Singleton

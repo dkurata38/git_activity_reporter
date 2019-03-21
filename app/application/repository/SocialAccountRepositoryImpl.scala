@@ -1,9 +1,9 @@
 package application.repository
 
 import adapter.gateway.twitter.TwitterUserGateway
-import domain.model.social.SocialClientId.Twitter
-import domain.model.social._
-import domain.model.user.UserId
+import domain.social.SocialClientId.Twitter
+import domain.social._
+import domain.user.UserId
 import javax.inject.{Inject, Singleton}
 import scalikejdbc._
 

@@ -1,6 +1,6 @@
 package application.repository
 
-import domain.model.user.{RegistrationStatus, User, UserId, UserRepository}
+import domain.user.{RegistrationStatus, User, UserId, UserRepository}
 import javax.inject.{Inject, Singleton}
 import scalikejdbc.{DB, DBSession, _}
 

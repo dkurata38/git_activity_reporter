@@ -4,10 +4,8 @@ import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 import application.cache.{CacheRepository, SignUpCache}
-import application.coordinator.UserCoordinator
 import application.inputport.LinkGitAccountUseCaseInputPort
-import controllers.routes
-import domain.model.git.account.GitClientId.GitHub
+import domain.git_account.GitClientId.GitHub
 import javax.inject.{Inject, Singleton}
 import play.api.libs.ws.WSClient
 import play.api.mvc.{Action, AnyContent, ControllerComponents, Request}
@@ -18,7 +16,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 
 @Singleton
-class GithubOAuthController @Inject()(config: Configuration, ws: WSClient, cacheRepository: CacheRepository, cc: ControllerComponents, userCoordinator: UserCoordinator, gitAccountOauthUseCaseInputPort: LinkGitAccountUseCaseInputPort) extends OAuthController(cacheRepository, cc) {
+class GithubOAuthController @Inject()(config: Configuration, ws: WSClient, cacheRepository: CacheRepository, cc: ControllerComponents, gitAccountOauthUseCaseInputPort: LinkGitAccountUseCaseInputPort) extends OAuthController(cacheRepository, cc) {
 
   val logger = Logger(classOf[GithubOAuthController])
 

@@ -1,9 +1,9 @@
 package application.repository
 
 import adapter.gateway.github.GitHubUserGateway
-import domain.model.git.account.GitClientId.GitHub
-import domain.model.git.account.{AccessToken, GitAccount, GitAccountRepository, GitClientId}
-import domain.model.user.UserId
+import domain.git_account.GitClientId.GitHub
+import domain.git_account.{AccessToken, GitAccount, GitAccountRepository, GitClientId}
+import domain.user.UserId
 import javax.inject.{Inject, Singleton}
 import scalikejdbc.{DB, DBSession, _}
 

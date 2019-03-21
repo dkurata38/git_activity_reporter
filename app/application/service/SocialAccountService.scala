@@ -1,7 +1,7 @@
 package application.service
 
-import domain.model.social.{SocialAccountRepository, SocialAccount, SocialAccountId, SocialClientId}
-import domain.model.user.UserId
+import domain.social.{SocialAccount, SocialAccountId, SocialAccountRepository, SocialClientId}
+import domain.user.UserId
 import javax.inject.{Inject, Singleton}
 
 @Singleton

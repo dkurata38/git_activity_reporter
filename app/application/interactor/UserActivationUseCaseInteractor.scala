@@ -2,9 +2,9 @@ package application.interactor
 
 import application.inputport.UserActivationUseCaseInputPort
 import application.repository.UserRepositoryImpl
-import domain.model.git.account.GitAccountRepository
-import domain.model.social.SocialAccountRepository
-import domain.model.user_token.{Token, UserTokenRepository}
+import domain.git_account.GitAccountRepository
+import domain.social.SocialAccountRepository
+import domain.user_token.{Token, UserTokenRepository}
 import javax.inject.{Inject, Singleton}
 
 @Singleton

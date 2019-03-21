@@ -1,8 +1,8 @@
 package application.cache
 
-import domain.model.git.account.{AccessToken, GitClientId}
-import domain.model.social.{SocialAccessToken, SocialClientId}
-import domain.model.user.User
+import domain.git_account.{AccessToken, GitClientId}
+import domain.social.{SocialAccessToken, SocialClientId}
+import domain.user.User
 
 case class SignInCache(user: User, private val gitOauthInfo: Map[GitClientId, AccessToken] = Map.empty, private val socialOauthInfo: Map[SocialClientId, SocialAccessToken] = Map.empty) {
   def addGitOauthInfo(clientId: GitClientId, accessToken: AccessToken) = {

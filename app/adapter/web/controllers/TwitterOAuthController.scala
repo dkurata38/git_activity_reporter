@@ -3,10 +3,9 @@ package adapter.web.controllers
 import java.util.concurrent.TimeUnit
 
 import application.cache.{CacheRepository, SignUpCache}
-import application.coordinator.UserCoordinator
 import application.inputport.{LinkSocialAccountUseCaseInputPort, UserSignInUseCaseInputPort}
 import controllers.routes
-import domain.model.social.SocialClientId
+import domain.social.SocialClientId
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.mvc.{AnyContent, ControllerComponents, Request}
@@ -16,7 +15,7 @@ import twitter4j.{Twitter, TwitterFactory}
 import scala.concurrent.duration.Duration
 
 @Singleton
-class TwitterOAuthController @Inject()(cc: ControllerComponents, userCoordinator: UserCoordinator, config: Configuration, cacheRepository: CacheRepository, userSignInUseCaseInputPort: UserSignInUseCaseInputPort, linkSocialAccountUseCaseInputPort: LinkSocialAccountUseCaseInputPort) extends OAuthController(cacheRepository, cc) {
+class TwitterOAuthController @Inject()(cc: ControllerComponents, config: Configuration, cacheRepository: CacheRepository, userSignInUseCaseInputPort: UserSignInUseCaseInputPort, linkSocialAccountUseCaseInputPort: LinkSocialAccountUseCaseInputPort) extends OAuthController(cacheRepository, cc) {
   override def signIn() = Action { implicit request: Request[AnyContent] =>
     request.session.get(config.get[String]("session.cookieName")).map{sessionKey =>
       val twitter = new TwitterFactory().getInstance()

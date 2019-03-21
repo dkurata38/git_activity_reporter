@@ -1,7 +1,7 @@
 package application.interactor
 
 import application.inputport.RegisterTemporaryUserUseCaseInputPort
-import domain.model.user.{User, UserRepository}
+import domain.user.{User, UserRepository}
 import javax.inject.{Inject, Singleton}
 
 @Singleton

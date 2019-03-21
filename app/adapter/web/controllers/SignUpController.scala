@@ -3,7 +3,7 @@ package adapter.web.controllers
 import application.cache.{CacheRepository, SignUpCache}
 import application.inputport.{RegisterTemporaryUserUseCaseInputPort, UserActivationUseCaseInputPort}
 import controllers.routes
-import domain.model.user.UserRepository
+import domain.user.UserRepository
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.mvc.{AbstractController, AnyContent, ControllerComponents, Request}

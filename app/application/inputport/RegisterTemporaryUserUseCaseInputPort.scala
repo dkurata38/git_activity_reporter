@@ -1,6 +1,6 @@
 package application.inputport
 
-import domain.model.user.User
+import domain.user.User
 
 trait RegisterTemporaryUserUseCaseInputPort {
   def register: User

@@ -1,9 +1,9 @@
 package application.interactor
 
 import application.inputport.SendMessageUseCaseInputPort
-import domain.model.social.SocialClientId.Twitter
-import domain.model.social.{SocialAccountRepository, SocialClientId, SocialMessage, SocialMessageRepository}
-import domain.model.user_token.{Token, UserTokenRepository}
+import domain.social.SocialClientId.Twitter
+import domain.social.{SocialAccountRepository, SocialClientId, SocialMessage, SocialMessageRepository}
+import domain.user_token.{Token, UserTokenRepository}
 import javax.inject.{Inject, Singleton}
 
 @Singleton

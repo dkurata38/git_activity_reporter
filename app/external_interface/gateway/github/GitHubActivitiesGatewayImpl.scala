@@ -3,10 +3,10 @@ package external_interface.gateway.github
 import java.time.{LocalDate, LocalDateTime, ZoneId}
 
 import adapter.gateway.github.{GitHubActivitiesGateway, GitHubUserGateway}
-import domain.model.git.account.GitClientId.GitHub
-import domain.model.git.account.{AccessToken, GitAccount}
-import domain.model.git.activity.GitActivityType.Push
-import domain.model.git.activity.{GitActivities, GitActivity, GitRepository, GitRepositoryId}
+import domain.git_account.{AccessToken, GitAccount}
+import domain.git_account.GitClientId.GitHub
+import domain.git_activity.GitActivityType.Push
+import domain.git_activity.{GitActivities, GitActivity, GitRepository, GitRepositoryId}
 import javax.inject.{Inject, Singleton}
 import org.eclipse.egit.github.core.client
 import org.eclipse.egit.github.core.client.{GitHubClient, PageIterator}

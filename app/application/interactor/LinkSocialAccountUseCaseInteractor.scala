@@ -1,8 +1,8 @@
 package application.interactor
 
 import application.inputport.LinkSocialAccountUseCaseInputPort
-import domain.model.social.{SocialAccessToken, SocialAccount, SocialAccountRepository, SocialClientId}
-import domain.model.user_token.{Token, UserTokenRepository}
+import domain.social.{SocialAccessToken, SocialAccount, SocialAccountRepository, SocialClientId}
+import domain.user_token.{Token, UserTokenRepository}
 import javax.inject.{Inject, Singleton}
 
 @Singleton

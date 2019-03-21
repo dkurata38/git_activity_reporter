@@ -1,6 +1,6 @@
 package adapter.gateway.github
 
-import domain.model.git.account.{AccessToken, GitAccount}
+import domain.git_account.{AccessToken, GitAccount}
 
 trait GitHubUserGateway {
   def getUser(accessToken: AccessToken): Option[GitAccount]

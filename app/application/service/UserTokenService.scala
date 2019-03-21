@@ -1,6 +1,6 @@
 package application.service
 
-import domain.model.user_token.{Token, UserToken, UserTokenRepository}
+import domain.user_token.{Token, UserToken, UserTokenRepository}
 import javax.inject.{Inject, Singleton}
 
 @Singleton

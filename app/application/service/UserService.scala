@@ -1,6 +1,6 @@
 package application.service
 
-import domain.model.user.{User, UserId, UserRepository}
+import domain.user.{User, UserId, UserRepository}
 import javax.inject.{Inject, Singleton}
 
 @Singleton

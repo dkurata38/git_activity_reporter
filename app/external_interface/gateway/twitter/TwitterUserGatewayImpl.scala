@@ -1,8 +1,8 @@
 package external_interface.gateway.twitter
 
 import adapter.gateway.twitter.TwitterUserGateway
-import domain.model.social.SocialClientId.Twitter
-import domain.model.social.{SocialAccessToken, SocialAccount, SocialAccountId}
+import domain.social.SocialClientId.Twitter
+import domain.social.{SocialAccessToken, SocialAccount, SocialAccountId}
 import javax.inject.{Inject, Singleton}
 import twitter4j.TwitterFactory
 import twitter4j.auth.AccessToken

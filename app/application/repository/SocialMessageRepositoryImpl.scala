@@ -1,6 +1,6 @@
 package application.repository
 
-import domain.model.social.{SocialAccount, SocialMessage, SocialMessageRepository}
+import domain.social.{SocialAccount, SocialMessage, SocialMessageRepository}
 import javax.inject.{Inject, Singleton}
 
 @Singleton

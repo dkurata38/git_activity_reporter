@@ -1,8 +1,8 @@
 import application.repository.{GitAccountRepositoryImpl, SocialAccountRepositoryImpl, UserRepositoryImpl}
 import com.google.inject.AbstractModule
-import domain.model.git.account.GitAccountRepository
-import domain.model.social.SocialAccountRepository
-import domain.model.user.UserRepository
+import domain.git_account.GitAccountRepository
+import domain.social.SocialAccountRepository
+import domain.user.UserRepository
 
 class Module extends AbstractModule {
   override def configure = {

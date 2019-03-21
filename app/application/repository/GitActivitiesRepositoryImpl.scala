@@ -3,9 +3,9 @@ package application.repository
 import java.time.LocalDate
 
 import adapter.gateway.github.GitHubActivitiesGateway
-import domain.model.git.account.GitAccount
-import domain.model.git.account.GitClientId.GitHub
-import domain.model.git.activity.{GitActivities, GitActivitiesRepository}
+import domain.git_account.GitAccount
+import domain.git_account.GitClientId.GitHub
+import domain.git_activity.{GitActivities, GitActivitiesRepository}
 import javax.inject.{Inject, Singleton}
 
 @Singleton
