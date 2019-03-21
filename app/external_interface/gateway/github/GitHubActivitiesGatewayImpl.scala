@@ -46,6 +46,6 @@ class GitHubActivitiesGatewayImpl @Inject()(gitHubUserGateway: GitHubUserGateway
     gitHubClient.setOAuth2Token(accessToken.value)
     val userService = new UserService(gitHubClient)
     val user = userService.getUser
-    Option(user).map(u => new GitAccount(null, GitHub, user.getName, accessToken)).orNull
+    Option(user).map(u => new GitAccount(null, GitHub, user.getName, accessToken))
   }
 }

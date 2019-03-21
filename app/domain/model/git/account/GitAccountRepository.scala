@@ -3,7 +3,7 @@ package domain.model.git.account
 import domain.model.user.UserId
 
 trait GitAccountRepository {
-  def getUserFromClient(clientId: GitClientId, accessToken: AccessToken): GitAccount
+  def getUserFromClient(clientId: GitClientId, accessToken: AccessToken): Option[GitAccount]
 
   def findAllByUserId(userId: UserId): Seq[GitAccount]
 

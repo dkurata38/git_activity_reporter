@@ -44,7 +44,7 @@ class GitAccountRepositoryImpl @Inject() (private implicit val gitHubUserGateway
         .map(rs => gitAccountMap(rs)).first().apply()
     }
   }
-  override def getUserFromClient(clientId: GitClientId, accessToken: AccessToken): GitAccount = clientId match {
+  override def getUserFromClient(clientId: GitClientId, accessToken: AccessToken): Option[GitAccount] = clientId match {
     case GitHub => gitHubUserGateway.getUser(accessToken)
     case _ => ???
   }
