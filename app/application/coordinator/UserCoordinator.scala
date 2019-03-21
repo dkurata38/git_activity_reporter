@@ -1,7 +1,7 @@
 package application.coordinator
 
 import application.cache.{SignInCache, SignUpCache}
-import application.service.{GitAccountService, SocialAccountService, UserService, UserTokenService}
+import application.service.{ SocialAccountService, UserService, UserTokenService}
 import domain.model.git.account.GitAccountRepository
 import domain.model.social.{SocialAccessToken, SocialAccount, SocialAccountId, SocialClientId}
 import domain.model.user.User
@@ -10,7 +10,6 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class UserCoordinator @Inject()(
                                  private val socialAccountService: SocialAccountService,
-                                 private val gitAccountService: GitAccountService,
                                  private val userService: UserService,
                                  private val userTokenService: UserTokenService,
                                  private val gitAccountRepository: GitAccountRepository) {
