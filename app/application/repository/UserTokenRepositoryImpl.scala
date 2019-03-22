@@ -32,7 +32,6 @@ class UserTokenRepositoryImpl @Inject() extends UserTokenRepository{
       sql"INSERT INTO user_token(user_account_id, token) VALUES (${userToken.userId.value}, ${userToken.token.value})"
         .update().apply()
     }
-
   }
 
   implicit class UserTokenMap(rs: WrappedResultSet) {
