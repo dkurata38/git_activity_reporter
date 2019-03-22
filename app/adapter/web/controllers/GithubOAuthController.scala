@@ -3,7 +3,7 @@ package adapter.web.controllers
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-import application.cache.{CacheRepository, SignUpCache}
+import application.cache.CacheRepository
 import application.inputport.LinkGitAccountUseCaseInputPort
 import domain.git_account.GitClientId.GitHub
 import javax.inject.{Inject, Singleton}
@@ -21,48 +21,40 @@ class GithubOAuthController @Inject()(config: Configuration, ws: WSClient, cache
   val logger = Logger(classOf[GithubOAuthController])
 
   override def signIn(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
-    request.session.get(config.get[String]("session.cookieName")).map { sessionKey =>
+    request.session.get("accessToken").map { sessionKey =>
       val gitHubOauth = new GitHubOauth(ws, config)
       cacheRepository.setCache(sessionKey, "gitHubOauth", gitHubOauth, Duration.apply(120, TimeUnit.SECONDS))
       Redirect(gitHubOauth.getAuthorizationURL)
-    }.getOrElse(Redirect(routes.HomeController.index()))
+    }.getOrElse(Redirect(adapter.web.controllers.routes.HomeController.index()))
   }
 
   override def signInCallback(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
     val codeOption: Option[String] = request.getQueryString("code")
-    val sessionKeyOption = request.session.get(config.get[String]("session.cookieName"))
+    val tokenOption = request.session.get("accessToken")
     val stateOption = request.getQueryString("state")
-    val gitHubOauthOption = sessionKeyOption.flatMap(sessionKey => cacheRepository.getCache[GitHubOauth](sessionKey, "gitHubOauth"))
+    val gitHubOauthOption = tokenOption.flatMap(sessionKey => cacheRepository.getCache[GitHubOauth](sessionKey, "gitHubOauth"))
     val accessTokenOption = (for {
       code <- codeOption
       state <- stateOption
       gitHubOauth <- gitHubOauthOption
     } yield gitHubOauth.getOAuthAccessToken(state, code)).flatten
 
-    val combinedOption = for {
-      sessionKey <- sessionKeyOption
-      accessToken <- accessTokenOption
-    } yield (sessionKey, accessToken)
-
-    combinedOption.flatMap { tuple =>
-      val sessionKey = tuple._1
-      val accessToken = tuple._2
+    accessTokenOption.flatMap { accessToken =>
       println("accessToken取得成功")
-      cacheRepository.getCache[SignUpCache](sessionKey, config.get[String]("app.signup.cache_name")).map { signUpCache =>
+      tokenOption.map { token =>
         println("signUpCache有")
-        gitAccountOauthUseCaseInputPort.link(sessionKey, GitHub, accessToken) match {
+        gitAccountOauthUseCaseInputPort.link(token, GitHub, accessToken) match {
           case Right(gitAccount) => {
-            cacheRepository.setCache(sessionKey, config.get[String]("app.signup.cache_name"), signUpCache.cacheGitAccount(gitAccount))
             println("サインイン")
-            Redirect(routes.SummaryController.index())
+            Redirect(adapter.web.controllers.routes.SummaryController.index())
           }
           case Left(message) => {
             println("サインイン失敗")
-            Redirect(routes.HomeController.index()).flashing(("message", message))
+            Redirect(adapter.web.controllers.routes.HomeController.index()).flashing(("message", message))
           }
         }
       }
-    }.getOrElse(Redirect(routes.HomeController.index()))
+    }.getOrElse(Redirect(adapter.web.controllers.routes.HomeController.index()))
   }
 
 }
