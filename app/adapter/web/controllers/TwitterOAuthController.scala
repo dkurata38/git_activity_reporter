@@ -56,7 +56,7 @@ class TwitterOAuthController @Inject()(cc: ControllerComponents, config: Configu
               }
             }
             case _ => {
-              userSignInUseCaseInputPort.signInWith(SocialClientId.Twitter, accessToken.getToken(), accessToken.getTokenSecret())
+              userSignInUseCaseInputPort.signInWith(SocialClientId.Twitter, accessToken.getToken, accessToken.getTokenSecret)
               match {
                 case Right(result) => {
                   Redirect(adapter.web.controllers.routes.SummaryController.index()).withSession(("accessToken", result.value))

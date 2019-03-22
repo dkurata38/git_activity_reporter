@@ -4,8 +4,10 @@ import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 import application.cache.CacheRepository
-import application.inputport.LinkGitAccountUseCaseInputPort
+import application.inputport.{CheckRegistrationStatusUseCaseInputPort, LinkGitAccountUseCaseInputPort}
+import application.interactor.UserSignInUseCaseInteractor
 import domain.git_account.GitClientId.GitHub
+import domain.user.RegistrationStatus.{Regular, Temporary}
 import javax.inject.{Inject, Singleton}
 import play.api.libs.ws.WSClient
 import play.api.mvc.{Action, AnyContent, ControllerComponents, Request}
@@ -16,7 +18,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 
 @Singleton
-class GithubOAuthController @Inject()(config: Configuration, ws: WSClient, cacheRepository: CacheRepository, cc: ControllerComponents, gitAccountOauthUseCaseInputPort: LinkGitAccountUseCaseInputPort) extends OAuthController(cacheRepository, cc) {
+class GithubOAuthController @Inject()(config: Configuration, ws: WSClient, cacheRepository: CacheRepository, cc: ControllerComponents, gitAccountOauthUseCaseInputPort: LinkGitAccountUseCaseInputPort, checkRegistrationStatusUseCaseInputPort: CheckRegistrationStatusUseCaseInputPort, userSignInUseCaseInteractor: UserSignInUseCaseInteractor) extends OAuthController(cacheRepository, cc) {
 
   val logger = Logger(classOf[GithubOAuthController])
 
@@ -39,19 +41,26 @@ class GithubOAuthController @Inject()(config: Configuration, ws: WSClient, cache
       gitHubOauth <- gitHubOauthOption
     } yield gitHubOauth.getOAuthAccessToken(state, code)).flatten
 
-    accessTokenOption.flatMap { accessToken =>
+    accessTokenOption.map { accessToken =>
       println("accessToken取得成功")
-      tokenOption.map { token =>
-        println("signUpCache有")
-        gitAccountOauthUseCaseInputPort.link(token, GitHub, accessToken) match {
-          case Right(gitAccount) => {
-            println("サインイン")
-            Redirect(adapter.web.controllers.routes.SummaryController.index())
+      tokenOption match  {
+        case Some(token) => {
+          gitAccountOauthUseCaseInputPort.link(token, GitHub, accessToken) match {
+            case Right(_) => {
+              checkRegistrationStatusUseCaseInputPort.registrationStatus(token) match {
+                case Temporary =>  Redirect(adapter.web.controllers.routes.SignUpController.linkSNS())
+                case Regular => Redirect(adapter.web.controllers.routes.SummaryController.index())
+              }
+            }
+            case Left(message) => {
+              println("サインイン失敗")
+              Redirect(adapter.web.controllers.routes.HomeController.index()).flashing(("message", message))
+            }
           }
-          case Left(message) => {
-            println("サインイン失敗")
-            Redirect(adapter.web.controllers.routes.HomeController.index()).flashing(("message", message))
-          }
+        }
+        case _ => userSignInUseCaseInteractor.signInWith(GitHub, accessToken) match {
+          case Right(token) => Redirect(adapter.web.controllers.routes.SummaryController.index()).withSession("accessToken" -> token.value)
+          case Left(message) => Redirect(adapter.web.controllers.routes.HomeController.index())
         }
       }
     }.getOrElse(Redirect(adapter.web.controllers.routes.HomeController.index()))
