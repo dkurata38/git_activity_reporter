@@ -1,7 +1,7 @@
 package application.inputport
 
-import domain.user.User
+import domain.user_token.Token
 
 trait RegisterTemporaryUserUseCaseInputPort {
-  def register: User
+  def register: Token
 }
