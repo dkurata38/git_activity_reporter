@@ -1,7 +1,7 @@
 package domain.user
 
-import domain.user_token.{UserToken, UserTokenRepository}
 import domain.user.RegistrationStatus.{Regular, Temporary}
+import domain.user_token.{UserToken, UserTokenRepository}
 
 class User(val userId: UserId, val registrationStatus: RegistrationStatus) {
   def activate: User = {
