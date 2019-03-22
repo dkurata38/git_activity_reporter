@@ -28,5 +28,6 @@ class Module extends AbstractModule {
     bind(classOf[UserSignInUseCaseInputPort]).to(classOf[UserSignInUseCaseInteractor])
     bind(classOf[UserTokenRepository]).to(classOf[UserTokenRepositoryImpl])
     bind(classOf[GitActivitiesRepository]).to(classOf[GitActivitiesRepositoryImpl])
+    bind(classOf[CheckRegistrationStatusUseCaseInputPort]).to(classOf[CheckRegistrationStatusUseCaseInteractor])
   }
 }
