@@ -38,3 +38,14 @@ Homebrewでインストールする方法と, 公式のバイナリを使った�
 ```
 $ sbt run
 ```
+
+#### herokuにデプロイをする.
+1. heroku CLIをインストールする.
+https://devcenter.heroku.com/articles/getting-started-with-scala#set-up
+
+2. heroku上でアプリケーションを作成をする.
+好きな名前のアプリケーションを作成する.
+
+3. heroku上で作成したアプリケーションの環境変数を作成する.
+
+4. デプロイする
