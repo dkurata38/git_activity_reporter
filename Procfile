@@ -1,1 +1,1 @@
-web: target/universal/stage/bin/git_activity_reporter -Dhttp.port=${PORT},config.resource=application-env.conf
+web: target/universal/stage/bin/git_activity_reporter -Dhttp.port=${PORT} -Dconfig.resource=application-env.conf
