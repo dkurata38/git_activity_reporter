@@ -106,6 +106,7 @@ Temporary Items
 
 **/*.conf
 !**/*-sample.conf
+!**/application-env.conf
 
 **/*.properties
 !**/*-sample.properties
