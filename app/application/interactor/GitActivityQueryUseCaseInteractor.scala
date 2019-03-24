@@ -17,7 +17,7 @@ class GitActivityQueryUseCaseInteractor @Inject() (
   override def queryGitActivities(token: String): GitActivities = {
     userTokenRepository.findByUserToken(Token(token))
       .map(userToken => gitAccountRepository.findAllByUserId(userToken.userId)
-        .map(gitAccount => gitAccount.queryGitActivities(LocalDate.now, LocalDate.now().minusDays(7)))
+        .map(gitAccount => gitAccount.queryGitActivities(LocalDate.now().minusDays(7), LocalDate.now))
         .fold(GitActivities.empty())((l1, l2) => l1 ++ l2)
       ).getOrElse(GitActivities.empty())
   }

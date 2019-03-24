@@ -10,9 +10,9 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class GitActivitiesRepositoryImpl @Inject()(gitHubActivitiesGateway: GitHubActivitiesGateway) extends GitActivitiesRepository{
-  override def findByUserIdCreatedAtBetween(gitAccount: GitAccount, to: LocalDate, from: LocalDate): GitActivities =
+  override def findByUserIdCreatedAtBetween(gitAccount: GitAccount, from: LocalDate, to: LocalDate): GitActivities =
     gitAccount.clientId match {
-      case GitHub => gitHubActivitiesGateway.getUserEvents(gitAccount.accessToken, to, from)
+      case GitHub => gitHubActivitiesGateway.getUserEvents(gitAccount.accessToken, from, to)
       case _ => ???
     }
 }
