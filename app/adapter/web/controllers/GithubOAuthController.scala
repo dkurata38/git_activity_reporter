@@ -17,14 +17,15 @@ import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 
+
 @Singleton
-class GithubOAuthController @Inject()(config: Configuration, ws: WSClient, cacheRepository: CacheRepository, cc: ControllerComponents, gitAccountOauthUseCaseInputPort: LinkGitAccountUseCaseInputPort, checkRegistrationStatusUseCaseInputPort: CheckRegistrationStatusUseCaseInputPort, userSignInUseCaseInteractor: UserSignInUseCaseInteractor) extends OAuthController(cacheRepository, cc) {
+class GithubOAuthController @Inject()(implicit config: Configuration, ws: WSClient, cacheRepository: CacheRepository, cc: ControllerComponents, gitAccountOauthUseCaseInputPort: LinkGitAccountUseCaseInputPort, checkRegistrationStatusUseCaseInputPort: CheckRegistrationStatusUseCaseInputPort, userSignInUseCaseInteractor: UserSignInUseCaseInteractor) extends OAuthController(cacheRepository, cc) {
 
   val logger = Logger(classOf[GithubOAuthController])
 
   override def signIn(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
     request.session.get("accessToken").map { sessionKey =>
-      val gitHubOauth = new GitHubOauth(ws, config)
+      val gitHubOauth = new GitHubOauth
       cacheRepository.setCache(sessionKey, "gitHubOauth", gitHubOauth, Duration.apply(120, TimeUnit.SECONDS))
       Redirect(gitHubOauth.getAuthorizationURL)
     }.getOrElse(Redirect(adapter.web.controllers.routes.HomeController.index()))
@@ -68,25 +69,22 @@ class GithubOAuthController @Inject()(config: Configuration, ws: WSClient, cache
 
 }
 
-class GitHubOauth(ws: WSClient, config: Configuration) {
-  private val authorizationUrl = "https://github.com/login/oauth/authorize"
-  private val accessTokenUrl = "https://github.com/login/oauth/access_token"
-  private val clientId = config.get[String]("app.github.client_id")
-  private val clientSecret = config.get[String]("app.github.client_secret")
-  private val callbackUrl = "http://127.0.0.1:9000/signin_callback/github"
-  private val scope = "repo"
+class GitHubOauth(implicit configuration: Configuration) {
+  import pureconfig.generic.auto._
+
   private val requestToken = UUID.randomUUID().toString
+  private val config = OAuthConfig.configLoader.load(configuration.underlying, GitHub.value)
 
   def getRequestToken = requestToken
 
   def getAuthorizationURL =
-    s"$authorizationUrl?client_id=$clientId&client_secret=$clientSecret&redirect_url=$callbackUrl&scope=$scope&state=$requestToken"
+    s"${GitHubOauth.authorizationUrl}?client_id=${config.clientId}&client_secret=${config.clientSecret}&redirect_url=${config.callbackUrl}&scope=${GitHubOauth.scope}&state=$requestToken"
 
-  def getOAuthAccessToken(state: String, code: String) = {
+  def getOAuthAccessToken(state: String, code: String)(implicit ws: WSClient) = {
     if (state == requestToken) {
-      val futureAccessToken = ws.url(accessTokenUrl)
+      val futureAccessToken = ws.url(GitHubOauth.accessTokenUrl)
         .addHttpHeaders(("Accept", "application/json"))
-        .addQueryStringParameters(("client_id", clientId), ("client_secret", clientSecret), ("code", code))
+        .addQueryStringParameters(("client_id", config.clientId), ("client_secret", config.clientSecret), ("code", code))
         .withRequestTimeout(Duration.apply(10000, TimeUnit.MILLISECONDS))
         .get().map(response => (response.json \ "access_token").as[String])
       println("AccessToken取得処理完了.")
@@ -95,5 +93,10 @@ class GitHubOauth(ws: WSClient, config: Configuration) {
       None
     }
   }
+}
+object GitHubOauth{
+  private val authorizationUrl = "https://github.com/login/oauth/authorize"
+  private val accessTokenUrl = "https://github.com/login/oauth/access_token"
+  private val scope = "repo"
 }
 

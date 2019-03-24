@@ -15,12 +15,12 @@ import twitter4j.{Twitter, TwitterFactory}
 import scala.concurrent.duration.Duration
 
 @Singleton
-class TwitterOAuthController @Inject()(cc: ControllerComponents, config: Configuration, cacheRepository: CacheRepository, userSignInUseCaseInputPort: UserSignInUseCaseInputPort, linkSocialAccountUseCaseInputPort: LinkSocialAccountUseCaseInputPort, checkRegistrationStatusUseCaseInputPort: CheckRegistrationStatusUseCaseInputPort) extends OAuthController(cacheRepository, cc) {
+class TwitterOAuthController @Inject()(cc: ControllerComponents, cacheRepository: CacheRepository, userSignInUseCaseInputPort: UserSignInUseCaseInputPort, linkSocialAccountUseCaseInputPort: LinkSocialAccountUseCaseInputPort, checkRegistrationStatusUseCaseInputPort: CheckRegistrationStatusUseCaseInputPort, implicit config: Configuration) extends OAuthController(cacheRepository, cc) {
   override def signIn() = Action { implicit request: Request[AnyContent] =>
     request.session.get("accessToken").map{sessionKey =>
-      val twitter = new TwitterFactory().getInstance()
-      val requestToken: RequestToken = twitter.getOAuthRequestToken("http://127.0.0.1:9000/signin_callback/twitter")
-      cacheRepository.setCache(sessionKey, "twitter", twitter, Duration.apply(120, TimeUnit.SECONDS))
+      val twitterOAuth = new TwitterOAuth()
+      val requestToken: RequestToken = twitterOAuth.getRequestToken
+      cacheRepository.setCache(sessionKey, "twitter", twitterOAuth, Duration.apply(120, TimeUnit.SECONDS))
       cacheRepository.setCache(sessionKey, "requestToken", requestToken, Duration.apply(120, TimeUnit.SECONDS))
       Redirect(requestToken.getAuthorizationURL)
     }.getOrElse(Redirect(adapter.web.controllers.routes.HomeController.index()))
@@ -31,7 +31,7 @@ class TwitterOAuthController @Inject()(cc: ControllerComponents, config: Configu
       case Some(_) => Redirect(adapter.web.controllers.routes.HomeController.index())
       case _ => {
         val tokenOption = request.session.get("accessToken")
-        val twitterOption = tokenOption.flatMap(sessionKey => cacheRepository.getCache[Twitter](sessionKey, "twitter"))
+        val twitterOption = tokenOption.flatMap(sessionKey => cacheRepository.getCache[TwitterOAuth](sessionKey, "twitter"))
         val requestTokenOption = tokenOption.flatMap(sessionKey => cacheRepository.getCache[RequestToken](sessionKey, "requestToken"))
         val authVerifierOption = request.getQueryString("oauth_verifier")
         tokenOption.foreach{sessionKey =>
@@ -75,4 +75,17 @@ class TwitterOAuthController @Inject()(cc: ControllerComponents, config: Configu
       }
     }
   }
+}
+
+class TwitterOAuth(implicit configuration: Configuration) {
+
+  private val twitter = new TwitterFactory().getInstance()
+  private val config = OAuthConfig.configLoader.load(configuration.underlying, SocialClientId.Twitter.value)
+  private val requestToken = twitter.getOAuthRequestToken(config.callbackUrl)
+
+  def getRequestToken = requestToken
+
+  def getAuthorizationURL = requestToken.getAuthorizationURL
+
+  def getOAuthAccessToken(requestToken: RequestToken, oauthVerifier: String) = twitter.getOAuthAccessToken(requestToken, oauthVerifier)
 }
