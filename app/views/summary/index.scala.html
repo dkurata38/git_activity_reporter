@@ -1,7 +1,34 @@
-@import domain.model.git.event.GitEvents
-@(gitEvents: GitEvents)
+@import domain.git_activity.GitActivities
+@(gitEvents: GitActivities)
 
 @main("Welcome to Play") {
-  <h1>Welcome to Play!</h1>
+  <div class="uk-section">
+    <div class="uk-container uk-container-large">
+      <div uk-grid>
+        <div class="uk-width-1-2@@s uk-width-1-5@@m">
+          <ul class="uk-nav uk-nav-default">
+            <li class="uk-active"><a href="#">Gitアクティビティサマリー</a></li>
+            <li><a href="#">Gitアカウント管理</a></li>
+            <li><a href="#">SNSアカウント管理</a></li>
+          </ul>
+        </div>
+        <div class="uk-width-1-2@@s uk-width-4-5@@m">
+          <h1>Gitアクティビティサマリー</h1>
+          @for(summary <- gitEvents.countByRepositoryAndEventType()) {
+            <dl>
+              <dt>リポジトリ</dt>
+              <dd>
+                <a href="@summary.gitRepository.repositoryUrl">
+                  @summary.gitRepository.repositoryId.toString (@summary.gitRepository.gitClientId.value)
+                </a>
+              </dd>
+              <dt>Push回数</dt>
+              <dd>@summary.count 回</dd>
+            </dl>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
 
 }
