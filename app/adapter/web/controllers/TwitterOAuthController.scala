@@ -3,8 +3,9 @@ package adapter.web.controllers
 import java.util.concurrent.TimeUnit
 
 import application.cache.CacheRepository
-import application.inputport.{LinkSocialAccountUseCaseInputPort, UserSignInUseCaseInputPort}
+import application.inputport.{CheckRegistrationStatusUseCaseInputPort, LinkSocialAccountUseCaseInputPort, UserSignInUseCaseInputPort}
 import domain.social.SocialClientId
+import domain.user.RegistrationStatus.{Regular, Temporary}
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.mvc.{AnyContent, ControllerComponents, Request}
@@ -14,7 +15,7 @@ import twitter4j.{Twitter, TwitterFactory}
 import scala.concurrent.duration.Duration
 
 @Singleton
-class TwitterOAuthController @Inject()(cc: ControllerComponents, config: Configuration, cacheRepository: CacheRepository, userSignInUseCaseInputPort: UserSignInUseCaseInputPort, linkSocialAccountUseCaseInputPort: LinkSocialAccountUseCaseInputPort) extends OAuthController(cacheRepository, cc) {
+class TwitterOAuthController @Inject()(cc: ControllerComponents, config: Configuration, cacheRepository: CacheRepository, userSignInUseCaseInputPort: UserSignInUseCaseInputPort, linkSocialAccountUseCaseInputPort: LinkSocialAccountUseCaseInputPort, checkRegistrationStatusUseCaseInputPort: CheckRegistrationStatusUseCaseInputPort) extends OAuthController(cacheRepository, cc) {
   override def signIn() = Action { implicit request: Request[AnyContent] =>
     request.session.get("accessToken").map{sessionKey =>
       val twitter = new TwitterFactory().getInstance()
@@ -50,7 +51,10 @@ class TwitterOAuthController @Inject()(cc: ControllerComponents, config: Configu
               linkSocialAccountUseCaseInputPort.link(token, SocialClientId.Twitter, accessToken.getToken, accessToken.getTokenSecret) match {
                 case Right(_) => {
                   println("連携成功")
-                  Redirect(adapter.web.controllers.routes.SummaryController.index())
+                  checkRegistrationStatusUseCaseInputPort.registrationStatus(token) match {
+                    case Temporary => Redirect(adapter.web.controllers.routes.SignUpController.complete())
+                    case Regular => Redirect(adapter.web.controllers.routes.SummaryController.index())
+                  }
                 }
                 case Left(message) => Redirect(adapter.web.controllers.routes.HomeController.index()).flashing(("message", message))
               }
