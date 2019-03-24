@@ -19,6 +19,17 @@
         <script src="@routes.Assets.versioned("javascripts/uikit-icons.min.js")"></script>
     </head>
     <body>
+        <div class="uk-navbar-container uk-sticky uk-sticky-fixed">
+            <div class="uk-container uk-container-expand">
+                <nav class="uk-navbar" uk-navbar>
+                    <div class="uk-navbar-left">
+                        <a class="uk-navbar-item uk-logo">
+                        GitActivityReporter
+                        </a>
+                    </div>
+                </nav>
+            </div>
+        </div>
         @flash.get("message").orNull
         @* And here's where we render the `Html` object containing
         * the page content. *@
