@@ -32,7 +32,10 @@ Java8以上が必要. インストール方法は[こちら](https://qiita.com/s
 3. sbtをインストールする.
 Homebrewでインストールする方法と, 公式のバイナリを使ったインストールをする方法の2種類がある. 詳細は[こちら](https://www.scala-sbt.org/1.0/docs/ja/Installing-sbt-on-Mac.html)
 
-4. etc...
+4. `conf/application-sample.conf`を`application.conf`にリネームし, 空欄になっているところを埋める.
+その際, [GitHubOauthAppの作成](https://windii.jp/study/howto/github-oauth)と, [TwitterAppの登録](https://qiita.com/kngsym2018/items/2524d21455aac111cdee)が必要になる.
+
+callback_urlのパスは `conf/routes`に定義されているパスと一致させる.
 
 5. アプリケーションを起動
 ```
