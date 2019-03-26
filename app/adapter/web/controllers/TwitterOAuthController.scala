@@ -9,13 +9,13 @@ import domain.user.RegistrationStatus.{Regular, Temporary}
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.mvc.{AnyContent, ControllerComponents, Request}
+import twitter4j.TwitterFactory
 import twitter4j.auth.RequestToken
-import twitter4j.{Twitter, TwitterFactory}
 
 import scala.concurrent.duration.Duration
 
 @Singleton
-class TwitterOAuthController @Inject()(cc: ControllerComponents, cacheRepository: CacheRepository, userSignInUseCaseInputPort: UserSignInUseCaseInputPort, linkSocialAccountUseCaseInputPort: LinkSocialAccountUseCaseInputPort, checkRegistrationStatusUseCaseInputPort: CheckRegistrationStatusUseCaseInputPort, implicit config: Configuration) extends OAuthController(cacheRepository, cc) {
+class TwitterOAuthController @Inject()(cc: ControllerComponents, cacheRepository: CacheRepository, userSignInUseCaseInputPort: UserSignInUseCaseInputPort, linkSocialAccountUseCaseInputPort: LinkSocialAccountUseCaseInputPort, checkRegistrationStatusUseCaseInputPort: CheckRegistrationStatusUseCaseInputPort, implicit val config: Configuration) extends OAuthController(cacheRepository, cc) {
   override def signIn() = Action { implicit request: Request[AnyContent] =>
     request.session.get("accessToken").map{sessionKey =>
       val twitterOAuth = new TwitterOAuth()
@@ -80,7 +80,7 @@ class TwitterOAuthController @Inject()(cc: ControllerComponents, cacheRepository
 class TwitterOAuth(implicit configuration: Configuration) {
 
   private val twitter = new TwitterFactory().getInstance()
-  private val config = OAuthConfig.configLoader.load(configuration.underlying, SocialClientId.Twitter.value)
+  private val config = OAuthConfig.configLoader.load(configuration.underlying, "app." + SocialClientId.Twitter.value)
   private val requestToken = twitter.getOAuthRequestToken(config.callbackUrl)
 
   def getRequestToken = requestToken

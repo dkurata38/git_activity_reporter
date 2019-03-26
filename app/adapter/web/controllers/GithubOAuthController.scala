@@ -70,10 +70,9 @@ class GithubOAuthController @Inject()(implicit config: Configuration, ws: WSClie
 }
 
 class GitHubOauth(implicit configuration: Configuration) {
-  import pureconfig.generic.auto._
 
   private val requestToken = UUID.randomUUID().toString
-  private val config = OAuthConfig.configLoader.load(configuration.underlying, GitHub.value)
+  private val config = OAuthConfig.configLoader.load(configuration.underlying, "app." + GitHub.value)
 
   def getRequestToken = requestToken
 
