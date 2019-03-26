@@ -27,10 +27,17 @@ $ git clone https://github.com/dkurata38/git_activity_reporter.git
 ```
 
 2. Javaをインストールする.
-Java8以上が必要. インストール方法は[こちら](https://qiita.com/seijikohara/items/56cc4ac83ef9d686fab2)
+Java8以上が必要. 以下の例は最新LTSのJava11をインストールする方法. 詳細は[こちら](https://qiita.com/seijikohara/items/56cc4ac83ef9d686fab2)
+```
+$ brew tap homebrew/cask-versions
+$ brew cask install java11
+```
 
 3. sbtをインストールする.
-Homebrewでインストールする方法と, 公式のバイナリを使ったインストールをする方法の2種類がある. 詳細は[こちら](https://www.scala-sbt.org/1.0/docs/ja/Installing-sbt-on-Mac.html)
+Homebrewでインストールする方法と, 公式のバイナリを使ったインストールをする方法の2種類がある. 以下はHomebrewでインストールするためのコマンド. 詳細は[こちら](https://www.scala-sbt.org/1.0/docs/ja/Installing-sbt-on-Mac.html)
+```
+$ brew install sbt@1
+```
 
 4. `conf/application-sample.conf`を`application.conf`にリネームし, 空欄になっているところを埋める.
 その際, [GitHubOauthAppの作成](https://windii.jp/study/howto/github-oauth)と, [TwitterAppの登録](https://qiita.com/kngsym2018/items/2524d21455aac111cdee)が必要になる.
