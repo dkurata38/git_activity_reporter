@@ -20,7 +20,7 @@ class UserRepositoryImpl @Inject() extends UserRepository {
 
   def userAccountMap(rs: WrappedResultSet) = new User(
     UserId(rs.string("id")),
-    RegistrationStatus.getByValue(rs.int("registration_status"))
+    RegistrationStatus(rs.int("registration_status"))
   )
 
   override def update(user: User): Int = DB autoCommit { implicit session: DBSession =>

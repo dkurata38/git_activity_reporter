@@ -33,7 +33,7 @@ class GitAccountRepositoryImpl @Inject() (private implicit val gitHubUserGateway
 
   def gitAccountMap(rs: WrappedResultSet) = new GitAccount(
     UserId(rs.string("user_account_id")),
-    GitClientId.getByValue(rs.string("client_id")),
+    GitClientId(rs.string("client_id")),
     rs.string("user_name"),
     AccessToken(rs.string("access_token"))
   )

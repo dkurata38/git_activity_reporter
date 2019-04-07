@@ -1,10 +1,12 @@
 package domain.social
 
-sealed class SocialClientId(val value: String)
+import domain.{Enum, EnumValue}
 
-object SocialClientId {
+sealed abstract class SocialClientId(val value: String) extends EnumValue {
+  override type Value = String
+}
+
+object SocialClientId extends Enum[SocialClientId]{
   case object Twitter extends SocialClientId("twitter")
-  def getByValue(value: String) = value match {
-    case Twitter.`value` => Twitter
-  }
+  override val values: Seq[SocialClientId] = Seq(Twitter)
 }

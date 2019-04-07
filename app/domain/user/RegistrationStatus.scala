@@ -1,14 +1,14 @@
 package domain.user
 
-sealed abstract class RegistrationStatus(val value: Int)
+import domain.{Enum, EnumValue}
 
-object RegistrationStatus {
+sealed abstract class RegistrationStatus(val value: Int) extends EnumValue {
+  override type Value = Int
+}
+
+object RegistrationStatus extends Enum[RegistrationStatus] {
   case object Temporary extends RegistrationStatus(0)
   case object Regular extends RegistrationStatus(1)
 
-  def getByValue(value: Int): RegistrationStatus = value match {
-    case Temporary.value => Temporary
-    case Regular.value => Regular
-    case _ => throw new IllegalArgumentException
-  }
+  override val values: Seq[RegistrationStatus] = Seq(Temporary, Regular)
 }

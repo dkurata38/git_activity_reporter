@@ -14,7 +14,7 @@ class SocialAccountRepositoryImpl @Inject() (private val twitterUserGateway: Twi
       sql"SELECT * FROM social_account WHERE user_account_id = ${userId.value}"
         .map(rs => new SocialAccount(
           UserId(rs.string("user_account_id")),
-          SocialClientId.getByValue(rs.string("client_id")),
+          SocialClientId(rs.string("client_id")),
           SocialAccountId(rs.get("user_name")),
           SocialAccessToken(rs.string("access_token"), rs.string("access_token_secret"))
         )).list().apply()
@@ -43,7 +43,7 @@ class SocialAccountRepositoryImpl @Inject() (private val twitterUserGateway: Twi
   def socialAccountMap(rs: WrappedResultSet) = {
     new SocialAccount(
       UserId(rs.string("user_account_id")),
-      SocialClientId.getByValue(rs.string("client_id")),
+      SocialClientId(rs.string("client_id")),
       SocialAccountId(rs.get("user_name")),
       SocialAccessToken(rs.string("access_token"), rs.string("access_token_secret"))
     )

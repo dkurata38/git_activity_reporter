@@ -1,29 +1,15 @@
 package domain.git_account
 
-sealed abstract class GitClientId(val value: String) {
-  override def hashCode(): Int = value.hashCode
+import domain.{Enum, EnumValue}
 
-  override def equals(obj: Any): Boolean = {
-    obj match {
-      case obj: GitClientId => value == obj.value
-      case _ => false
-    }
-  }
+sealed abstract class GitClientId(val value: String) extends EnumValue {
+  override type Value = String
 }
 
-object GitClientId {
-
+object GitClientId extends Enum[GitClientId]{
   case object GitHub extends GitClientId("GitHub")
-
   case object GitLab extends GitClientId("GitLab")
-
   case object BitBucket extends GitClientId("BitBucket")
 
-  def getByValue(value: String): GitClientId = {
-    value match {
-      case "GitHub" => GitHub
-      case _ => ???
-    }
-  }
-
+  override val values: Seq[GitClientId] = Seq(GitHub, GitLab, BitBucket)
 }
