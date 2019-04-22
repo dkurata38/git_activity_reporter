@@ -5,7 +5,7 @@
 
 # An example controller showing a sample home page
 GET        /                             adapter.web.controllers.HomeController.index
-GET        /siginup/index                    adapter.web.controllers.SignUpController.initialize
+#GET        /siginup/index                    adapter.web.controllers.SignUpController.initialize
 GET        /signin/twitter               adapter.web.controllers.TwitterOAuthController.signIn
 GET        /signin_callback/twitter        adapter.web.controllers.TwitterOAuthController.signInCallback
 GET        /signin/github                 adapter.web.controllers.GithubOAuthController.signIn

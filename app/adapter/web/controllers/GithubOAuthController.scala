@@ -43,13 +43,12 @@ class GithubOAuthController @Inject()(implicit config: Configuration, ws: WSClie
     } yield gitHubOauth.getOAuthAccessToken(state, code)).flatten
 
     accessTokenOption.map { accessToken =>
-      println("accessToken取得成功")
       tokenOption match  {
         case Some(token) => {
           gitAccountOauthUseCaseInputPort.link(token, GitHub, accessToken) match {
             case Right(_) => {
               checkRegistrationStatusUseCaseInputPort.registrationStatus(token) match {
-                case Temporary =>  Redirect(adapter.web.controllers.routes.SignUpController.linkSNS())
+                case Temporary =>  Redirect(adapter.web.controllers.routes.SignUpController.complete())
                 case Regular => Redirect(adapter.web.controllers.routes.SummaryController.index())
               }
             }

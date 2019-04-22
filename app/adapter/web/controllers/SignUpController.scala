@@ -9,17 +9,8 @@ import play.api.mvc.{AbstractController, AnyContent, ControllerComponents, Reque
 
 @Singleton
 class SignUpController @Inject() (cc: ControllerComponents, repo: UserRepository, config: Configuration, cacheRepository: CacheRepository, userActivationUseCaseInputPort: UserActivationUseCaseInputPort, registerTemporaryUserUseCaseInputPort: RegisterTemporaryUserUseCaseInputPort) extends AbstractController(cc){
-  def initialize = Action { implicit request: Request[AnyContent] =>
-      val token = registerTemporaryUserUseCaseInputPort.register
-      Redirect(adapter.web.controllers.routes.SignUpController.linkGit()).withSession("accessToken" -> token.value)
-  }
-
   def linkGit = Action {
     Ok(views.html.signup.git())
-  }
-
-  def linkSNS = Action {
-    Ok(views.html.signup.sns())
   }
 
   def complete = Action { implicit request: Request[AnyContent] =>
