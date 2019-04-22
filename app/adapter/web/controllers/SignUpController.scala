@@ -1,14 +1,14 @@
 package adapter.web.controllers
 
 import application.cache.CacheRepository
-import application.inputport.{RegisterTemporaryUserUseCaseInputPort, UserActivationUseCaseInputPort}
+import application.inputport.UserActivationUseCaseInputPort
 import domain.user.UserRepository
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.mvc.{AbstractController, AnyContent, ControllerComponents, Request}
 
 @Singleton
-class SignUpController @Inject() (cc: ControllerComponents, repo: UserRepository, config: Configuration, cacheRepository: CacheRepository, userActivationUseCaseInputPort: UserActivationUseCaseInputPort, registerTemporaryUserUseCaseInputPort: RegisterTemporaryUserUseCaseInputPort) extends AbstractController(cc){
+class SignUpController @Inject() (cc: ControllerComponents, repo: UserRepository, config: Configuration, cacheRepository: CacheRepository, userActivationUseCaseInputPort: UserActivationUseCaseInputPort) extends AbstractController(cc){
   def linkGit = Action {
     Ok(views.html.signup.git())
   }
