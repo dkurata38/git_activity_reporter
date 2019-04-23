@@ -11,7 +11,7 @@ GET        /signin_callback/twitter        adapter.web.controllers.TwitterOAuthC
 GET        /signin/github                 adapter.web.controllers.GithubOAuthController.signIn
 GET        /signin_callback/github         adapter.web.controllers.GithubOAuthController.signInCallback
 GET        /signup/git           adapter.web.controllers.SignUpController.linkGit
-GET        /signup/sns           adapter.web.controllers.SignUpController.linkSNS
+#GET        /signup/sns           adapter.web.controllers.SignUpController.linkSNS
 GET        /signup/complete           adapter.web.controllers.SignUpController.complete
 GET         /summary/index      adapter.web.controllers.SummaryController.index
 #GET         /signin/:clientId
