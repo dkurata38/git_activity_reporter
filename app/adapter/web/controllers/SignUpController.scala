@@ -1,16 +1,25 @@
 package adapter.web.controllers
 
+import java.util.UUID
+
 import application.cache.CacheRepository
-import application.inputport.UserActivationUseCaseInputPort
-import domain.user.UserRepository
+import application.inputport.{FindUserByTokenUseCaseInputPort, UserActivationUseCaseInputPort}
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.mvc.{AbstractController, AnyContent, ControllerComponents, Request}
 
 @Singleton
-class SignUpController @Inject() (cc: ControllerComponents, repo: UserRepository, config: Configuration, cacheRepository: CacheRepository, userActivationUseCaseInputPort: UserActivationUseCaseInputPort) extends AbstractController(cc){
-  def linkGit = Action {
-    Ok(views.html.signup.git())
+class SignUpController @Inject() (cc: ControllerComponents, config: Configuration, cacheRepository: CacheRepository, userActivationUseCaseInputPort: UserActivationUseCaseInputPort, findUserByTokenUseCaseInputPort: FindUserByTokenUseCaseInputPort) extends AbstractController(cc){
+  def linkGit = Action { implicit request: Request[AnyContent] =>
+    request.session.get("accessToken")
+      .flatMap(accessToken => findUserByTokenUseCaseInputPort.getUserOf(accessToken))
+      .map(_ => Redirect(adapter.web.controllers.routes.SummaryController.index()))
+      .getOrElse{
+        val accessToken = UUID.randomUUID().toString
+        request.session + ("accessToken", accessToken)
+        cacheRepository.setCache(accessToken, "oauthPurpose", OauthPurpose.SingUp)
+        Ok(views.html.signup.git())
+      }
   }
 
   def complete = Action { implicit request: Request[AnyContent] =>
