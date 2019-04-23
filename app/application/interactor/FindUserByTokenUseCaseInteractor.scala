@@ -6,7 +6,7 @@ import domain.user_token.{Token, UserTokenRepository}
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class CheckRegistrationStatusUseCaseInteractor @Inject()(userTokenRepository: UserTokenRepository, userRepository: UserRepository) extends FindUserByTokenUseCaseInputPort {
+class FindUserByTokenUseCaseInteractor @Inject()(userTokenRepository: UserTokenRepository, userRepository: UserRepository) extends FindUserByTokenUseCaseInputPort {
   override def registrationStatus(token: String): RegistrationStatus = {
     userTokenRepository.findByUserToken(Token(token)).flatMap(userToken =>
       userRepository.findOneById(userToken.userId).map(user => user.registrationStatus)

@@ -23,11 +23,11 @@ class Module extends AbstractModule {
     bind(classOf[GitActivityQueryUseCaseInputPort]).to(classOf[GitActivityQueryUseCaseInteractor])
     bind(classOf[LinkGitAccountUseCaseInputPort]).to(classOf[LinkGitAccountUseCaseInteractor])
     bind(classOf[LinkSocialAccountUseCaseInputPort]).to(classOf[LinkSocialAccountUseCaseInteractor])
-    bind(classOf[RegisterTemporaryUserUseCaseInputPort]).to(classOf[RegisterTemporaryUserUseCaseInteractor])
+    bind(classOf[FindUserByTokenUseCaseInputPort]).to(classOf[FindUserByTokenUseCaseInteractor])
     bind(classOf[UserActivationUseCaseInputPort]).to(classOf[UserActivationUseCaseInteractor])
     bind(classOf[UserSignInUseCaseInputPort]).to(classOf[UserSignInUseCaseInteractor])
     bind(classOf[UserTokenRepository]).to(classOf[UserTokenRepositoryImpl])
     bind(classOf[GitActivitiesRepository]).to(classOf[GitActivitiesRepositoryImpl])
-    bind(classOf[FindUserByTokenUseCaseInputPort]).to(classOf[CheckRegistrationStatusUseCaseInteractor])
+    bind(classOf[FindUserByTokenUseCaseInputPort]).to(classOf[FindUserByTokenUseCaseInteractor])
   }
 }
