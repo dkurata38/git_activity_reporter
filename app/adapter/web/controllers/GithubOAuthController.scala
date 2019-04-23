@@ -4,8 +4,9 @@ import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 import application.cache.CacheRepository
-import application.inputport.{CheckRegistrationStatusUseCaseInputPort, LinkGitAccountUseCaseInputPort}
+import application.inputport.{FindUserByTokenUseCaseInputPort, LinkGitAccountUseCaseInputPort}
 import application.interactor.UserSignInUseCaseInteractor
+import domain.git_account.AccessToken
 import domain.git_account.GitClientId.GitHub
 import domain.user.RegistrationStatus.{Regular, Temporary}
 import javax.inject.{Inject, Singleton}
@@ -19,16 +20,20 @@ import scala.concurrent.duration.Duration
 
 
 @Singleton
-class GithubOAuthController @Inject()(implicit config: Configuration, ws: WSClient, cacheRepository: CacheRepository, cc: ControllerComponents, gitAccountOauthUseCaseInputPort: LinkGitAccountUseCaseInputPort, checkRegistrationStatusUseCaseInputPort: CheckRegistrationStatusUseCaseInputPort, userSignInUseCaseInteractor: UserSignInUseCaseInteractor) extends OAuthController(cacheRepository, cc) {
+class GithubOAuthController @Inject()(implicit config: Configuration, ws: WSClient, cacheRepository: CacheRepository, cc: ControllerComponents, gitAccountOauthUseCaseInputPort: LinkGitAccountUseCaseInputPort, findUserByTokenUseCaseInputPort: FindUserByTokenUseCaseInputPort, userSignInUseCaseInteractor: UserSignInUseCaseInteractor) extends OAuthController(cacheRepository, cc) {
 
   val logger = Logger(classOf[GithubOAuthController])
 
   override def signIn(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
-    request.session.get("accessToken").map { sessionKey =>
-      val gitHubOauth = new GitHubOauth
-      cacheRepository.setCache(sessionKey, "gitHubOauth", gitHubOauth, Duration.apply(120, TimeUnit.SECONDS))
-      Redirect(gitHubOauth.getAuthorizationURL)
-    }.getOrElse(Redirect(adapter.web.controllers.routes.HomeController.index()))
+    val accessToken = request.session.get("accessToken").getOrElse({
+      val uuid = UUID.randomUUID().toString
+      request.session + ("accessToken", uuid)
+      uuid
+    })
+
+    val gitHubOauth = new GitHubOauth
+    cacheRepository.setCache(accessToken, "gitHubOauth", gitHubOauth, Duration.apply(120, TimeUnit.SECONDS))
+    Redirect(gitHubOauth.getAuthorizationURL)
   }
 
   override def signInCallback(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
@@ -43,11 +48,18 @@ class GithubOAuthController @Inject()(implicit config: Configuration, ws: WSClie
     } yield gitHubOauth.getOAuthAccessToken(state, code)).flatten
 
     accessTokenOption.map { accessToken =>
+      tokenOption.map(token =>
+        findUserByTokenUseCaseInputPort.getUserOf(token) match {
+          case Some(user) => gitAccountOauthUseCaseInputPort.link(token, GitHub, AccessToken(accessToken))
+          case _ =>  // TODO User registration
+        }
+      )
+
       tokenOption match  {
         case Some(token) => {
-          gitAccountOauthUseCaseInputPort.link(token, GitHub, accessToken) match {
+          gitAccountOauthUseCaseInputPort.link(token, GitHub, AccessToken(accessToken)) match {
             case Right(_) => {
-              checkRegistrationStatusUseCaseInputPort.registrationStatus(token) match {
+              findUserByTokenUseCaseInputPort.registrationStatus(token) match {
                 case Temporary =>  Redirect(adapter.web.controllers.routes.SignUpController.complete())
                 case Regular => Redirect(adapter.web.controllers.routes.SummaryController.index())
               }

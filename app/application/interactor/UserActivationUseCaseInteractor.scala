@@ -2,9 +2,10 @@ package application.interactor
 
 import application.inputport.UserActivationUseCaseInputPort
 import application.repository.UserRepositoryImpl
-import domain.git_account.GitAccountRepository
+import domain.git_account.{AccessToken, GitAccount, GitAccountRepository, GitClientId}
 import domain.social.SocialAccountRepository
-import domain.user_token.{Token, UserTokenRepository}
+import domain.user.{RegistrationStatus, User, UserId}
+import domain.user_token.{Token, UserToken, UserTokenRepository}
 import javax.inject.{Inject, Singleton}
 
 @Singleton
@@ -26,4 +27,14 @@ class UserActivationUseCaseInteractor @Inject() (
       }
     }
   }.map(token => Right(token)).getOrElse(Left(""))
+
+  override def register(token: String, gitClientId: GitClientId, accessToken: AccessToken): Either[String, Token] = {
+    gitAccountRepository.getUserFromClient(gitClientId, accessToken).map{gitAccount =>
+      val userId = UserId.newId
+      userRepository.create(new User(userId, RegistrationStatus.Regular))
+      gitAccountRepository.create(new GitAccount(userId, gitClientId, gitAccount.gitUserName, accessToken))
+      userTokenRepository.create(new UserToken(userId, Token(token)))
+      Token(token)
+    }.toRight("ユーザ登録に失敗しました")
+  }
 }

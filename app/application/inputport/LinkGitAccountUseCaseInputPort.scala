@@ -1,6 +1,6 @@
 package application.inputport
 
-import domain.git_account.{GitAccount, GitClientId}
+import domain.git_account.{AccessToken, GitAccount, GitClientId}
 
 trait LinkGitAccountUseCaseInputPort {
   /**
@@ -9,5 +9,5 @@ trait LinkGitAccountUseCaseInputPort {
     * @param accessToken
     * @return
     */
-  def link(token: String, clientId: GitClientId, accessToken: String): Either[String, GitAccount]
+  def link(token: String, clientId: GitClientId, accessToken: AccessToken): Either[String, GitAccount]
 }

@@ -3,7 +3,7 @@ package adapter.web.controllers
 import java.util.concurrent.TimeUnit
 
 import application.cache.CacheRepository
-import application.inputport.{CheckRegistrationStatusUseCaseInputPort, LinkSocialAccountUseCaseInputPort, UserSignInUseCaseInputPort}
+import application.inputport.{FindUserByTokenUseCaseInputPort, LinkSocialAccountUseCaseInputPort, UserSignInUseCaseInputPort}
 import domain.social.SocialClientId
 import domain.user.RegistrationStatus.{Regular, Temporary}
 import javax.inject.{Inject, Singleton}
@@ -15,7 +15,7 @@ import twitter4j.auth.RequestToken
 import scala.concurrent.duration.Duration
 
 @Singleton
-class TwitterOAuthController @Inject()(cc: ControllerComponents, cacheRepository: CacheRepository, userSignInUseCaseInputPort: UserSignInUseCaseInputPort, linkSocialAccountUseCaseInputPort: LinkSocialAccountUseCaseInputPort, checkRegistrationStatusUseCaseInputPort: CheckRegistrationStatusUseCaseInputPort, implicit val config: Configuration) extends OAuthController(cacheRepository, cc) {
+class TwitterOAuthController @Inject()(cc: ControllerComponents, cacheRepository: CacheRepository, userSignInUseCaseInputPort: UserSignInUseCaseInputPort, linkSocialAccountUseCaseInputPort: LinkSocialAccountUseCaseInputPort, checkRegistrationStatusUseCaseInputPort: FindUserByTokenUseCaseInputPort, implicit val config: Configuration) extends OAuthController(cacheRepository, cc) {
   override def signIn() = Action { implicit request: Request[AnyContent] =>
     request.session.get("accessToken").map{sessionKey =>
       val twitterOAuth = new TwitterOAuth()

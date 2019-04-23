@@ -9,9 +9,9 @@ import javax.inject.{Inject, Singleton}
 class LinkGitAccountUseCaseInteractor @Inject()(
                                                  private val gitAccountRepository: GitAccountRepository,
                                                  implicit private val userTokenRepository: UserTokenRepository) extends LinkGitAccountUseCaseInputPort{
-  override def link(token: String, clientId: GitClientId, accessToken: String): Either[String, GitAccount] = {
+  override def link(token: String, clientId: GitClientId, accessToken: AccessToken): Either[String, GitAccount] = {
     userTokenRepository.findByUserToken(Token(token)).flatMap{ token =>
-      gitAccountRepository.getUserFromClient(clientId, AccessToken(accessToken)).flatMap{ gitAccount =>
+      gitAccountRepository.getUserFromClient(clientId, accessToken).flatMap{ gitAccount =>
         gitAccountRepository.findByClientIdAndUserName(clientId,gitAccount.gitUserName) match {
           case None => Option{
             val gitUser = new GitAccount(token.userId, gitAccount.clientId, gitAccount.gitUserName, gitAccount.accessToken)
