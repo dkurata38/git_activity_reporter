@@ -6,9 +6,7 @@ import java.util.concurrent.TimeUnit
 import application.cache.CacheRepository
 import application.inputport.{FindUserByTokenUseCaseInputPort, LinkGitAccountUseCaseInputPort}
 import application.interactor.UserSignInUseCaseInteractor
-import domain.git_account.AccessToken
 import domain.git_account.GitClientId.GitHub
-import domain.user.RegistrationStatus.{Regular, Temporary}
 import javax.inject.{Inject, Singleton}
 import play.api.libs.ws.WSClient
 import play.api.mvc.{Action, AnyContent, ControllerComponents, Request}
@@ -37,47 +35,28 @@ class GithubOAuthController @Inject()(implicit config: Configuration, ws: WSClie
   }
 
   override def signInCallback(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
-    val codeOption: Option[String] = request.getQueryString("code")
-    val tokenOption = request.session.get("accessToken")
-    val stateOption = request.getQueryString("state")
-    val gitHubOauthOption = tokenOption.flatMap(sessionKey => cacheRepository.getCache[GitHubOauth](sessionKey, "gitHubOauth"))
-    val accessTokenOption = (for {
-      code <- codeOption
-      state <- stateOption
-      gitHubOauth <- gitHubOauthOption
-    } yield gitHubOauth.getOAuthAccessToken(state, code)).flatten
+    request.session.get("accessToken").flatMap{token =>
+      val maybeCode: Option[String] = request.getQueryString("code")
+      val maybeState = request.getQueryString("state")
+      val maybeGitHubOauth = cacheRepository.getCache[GitHubOauth](token, "gitHubOauth")
+      val maybeOauthPurpose = cacheRepository.getCache[OauthPurpose](token, "oauthPurpose")
+      val maybeAccessToken = (for {
+        code <- maybeCode
+        state <- maybeState
+        gitHubOauth <- maybeGitHubOauth
+      } yield gitHubOauth.getOAuthAccessToken(state, code)).flatten
 
-    accessTokenOption.map { accessToken =>
-      tokenOption.map(token =>
-        findUserByTokenUseCaseInputPort.getUserOf(token) match {
-          case Some(user) => gitAccountOauthUseCaseInputPort.link(token, GitHub, AccessToken(accessToken))
-          case _ =>  // TODO User registration
+      maybeAccessToken.flatMap { accessToken => maybeOauthPurpose.map {
+        case OauthPurpose.SingUp => userSignInUseCaseInteractor.signInWith(GitHub, accessToken) match {
+          case Right(userToken) =>
+            Redirect(adapter.web.controllers.routes.SummaryController.index()).withSession(("accessToken", userToken.value))
+          case Left(message) =>
+            Redirect(adapter.web.controllers.routes.HomeController.index()).flashing(("message", message))
         }
-      )
-
-      tokenOption match  {
-        case Some(token) => {
-          gitAccountOauthUseCaseInputPort.link(token, GitHub, AccessToken(accessToken)) match {
-            case Right(_) => {
-              findUserByTokenUseCaseInputPort.registrationStatus(token) match {
-                case Temporary =>  Redirect(adapter.web.controllers.routes.SignUpController.complete())
-                case Regular => Redirect(adapter.web.controllers.routes.SummaryController.index())
-              }
-            }
-            case Left(message) => {
-              println("サインイン失敗")
-              Redirect(adapter.web.controllers.routes.HomeController.index()).flashing(("message", message))
-            }
-          }
-        }
-        case _ => userSignInUseCaseInteractor.signInWith(GitHub, accessToken) match {
-          case Right(token) => Redirect(adapter.web.controllers.routes.SummaryController.index()).withSession("accessToken" -> token.value)
-          case Left(message) => Redirect(adapter.web.controllers.routes.HomeController.index())
-        }
+        case OauthPurpose.Link => Redirect(adapter.web.controllers.routes.HomeController.index())
       }
-    }.getOrElse(Redirect(adapter.web.controllers.routes.HomeController.index()))
-  }
-
+    }
+  }.getOrElse(Redirect(adapter.web.controllers.routes.HomeController.index()))
 }
 
 class GitHubOauth(implicit configuration: Configuration) {
