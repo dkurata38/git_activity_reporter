@@ -35,7 +35,7 @@ class GithubOAuthController @Inject()(implicit config: Configuration, ws: WSClie
   }
 
   override def signInCallback(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
-    request.session.get("accessToken").flatMap{token =>
+    request.session.get("accessToken").flatMap { token =>
       val maybeCode: Option[String] = request.getQueryString("code")
       val maybeState = request.getQueryString("state")
       val maybeGitHubOauth = cacheRepository.getCache[GitHubOauth](token, "gitHubOauth")
@@ -46,17 +46,19 @@ class GithubOAuthController @Inject()(implicit config: Configuration, ws: WSClie
         gitHubOauth <- maybeGitHubOauth
       } yield gitHubOauth.getOAuthAccessToken(state, code)).flatten
 
-      maybeAccessToken.flatMap { accessToken => maybeOauthPurpose.map {
-        case OauthPurpose.SingUp => userSignInUseCaseInteractor.signInWith(GitHub, accessToken) match {
-          case Right(userToken) =>
-            Redirect(adapter.web.controllers.routes.SummaryController.index()).withSession(("accessToken", userToken.value))
-          case Left(message) =>
-            Redirect(adapter.web.controllers.routes.HomeController.index()).flashing(("message", message))
+      maybeAccessToken.flatMap { accessToken =>
+        maybeOauthPurpose.map {
+          case OauthPurpose.SingUp => userSignInUseCaseInteractor.signInWith(GitHub, accessToken) match {
+            case Right(userToken) =>
+              Redirect(adapter.web.controllers.routes.SummaryController.index()).withSession(("accessToken", userToken.value))
+            case Left(message) =>
+              Redirect(adapter.web.controllers.routes.HomeController.index()).flashing(("message", message))
+          }
+          case OauthPurpose.Link => Redirect(adapter.web.controllers.routes.HomeController.index())
         }
-        case OauthPurpose.Link => Redirect(adapter.web.controllers.routes.HomeController.index())
       }
-    }
-  }.getOrElse(Redirect(adapter.web.controllers.routes.HomeController.index()))
+    }.getOrElse(Redirect(adapter.web.controllers.routes.HomeController.index()))
+  }
 }
 
 class GitHubOauth(implicit configuration: Configuration) {
