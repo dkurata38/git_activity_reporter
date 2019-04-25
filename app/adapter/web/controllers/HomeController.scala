@@ -1,5 +1,6 @@
 package adapter.web.controllers
 
+import application.inputport.FindUserByTokenUseCaseInputPort
 import javax.inject.{Inject, Singleton}
 import play.api.mvc._
 
@@ -8,7 +9,7 @@ import play.api.mvc._
   * application's home page.
   */
 @Singleton
-class HomeController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
+class HomeController @Inject()(cc: ControllerComponents, findUserByTokenUseCaseInputPort: FindUserByTokenUseCaseInputPort) extends AbstractController(cc) {
 
   /**
     * Create an Action to render an HTML page.
@@ -18,6 +19,14 @@ class HomeController @Inject()(cc: ControllerComponents) extends AbstractControl
     * a path of `/`.
     */
   def index() = Action { implicit request: Request[AnyContent] =>
-    Ok(views.html.index())
+    request.session.get("accessToken").map(accessToken =>
+      findUserByTokenUseCaseInputPort.getUserOf(accessToken) match {
+        case Some(_) => Redirect(adapter.web.controllers.routes.SummaryController.index())
+        case None => {
+          val session = request.session - "accessToken"
+          Ok(views.html.index()).withSession(session)
+        }
+      }
+    ).getOrElse(Ok(views.html.index()))
   }
 }

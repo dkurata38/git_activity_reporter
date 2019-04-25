@@ -16,9 +16,8 @@ class SignUpController @Inject() (cc: ControllerComponents, config: Configuratio
       .map(_ => Redirect(adapter.web.controllers.routes.SummaryController.index()))
       .getOrElse{
         val accessToken = UUID.randomUUID().toString
-        request.session + ("accessToken", accessToken)
         cacheRepository.setCache(accessToken, "oauthPurpose", OauthPurpose.SingUp)
-        Ok(views.html.signup.git())
+        Ok(views.html.signup.git()).withSession(("accessToken", accessToken))
       }
   }
 
