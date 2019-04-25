@@ -24,7 +24,7 @@ class UserSignInUseCaseInteractor @Inject() (
           userRepository.create(new User(userId, Regular))
           gitAccountRepository.create(new GitAccount(userId, clientId, gitAccount.gitUserName, AccessToken(accessToken)))
           Right(UserToken.issueTo(userId).token)
-        }).getOrElse(Left(""))
+        }).getOrElse(Left("サインインに失敗しました"))
   }
 
   override def signInWith(clientId: SocialClientId, accessToken: String, accessTokenSecret: String): Either[String, Token] = {
@@ -33,6 +33,6 @@ class UserSignInUseCaseInteractor @Inject() (
     )
     .map{ u =>
       Right(UserToken.issueTo(u.userId).token)
-    }.getOrElse(Left(""))
+    }.getOrElse(Left("サインインに失敗しました"))
   }
 }
