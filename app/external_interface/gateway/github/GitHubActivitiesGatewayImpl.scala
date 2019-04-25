@@ -29,7 +29,7 @@ class GitHubActivitiesGatewayImpl @Inject() extends GitHubActivitiesGateway with
       val events = initEvents ++ eventPageIterator.next().asScala
         .filter(e => LocalDateTime.ofInstant(e.getCreatedAt.toInstant, ZoneId.systemDefault()).toLocalDate.isAfter(from))
         .map(e => e.toGitActivity)
-        .foldLeft(initEvents)((activities, activity) => activities + activity)
+        .foldLeft(initEvents)((activities, activity) => if (activity == null) activities else activities + activity)
       parseEventRecursive(eventPageIterator, events)
     }
 
@@ -59,7 +59,7 @@ class GitHubActivitiesGatewayImpl @Inject() extends GitHubActivitiesGateway with
           event.getPayload.asInstanceOf[PushPayload].getCommits.asScala.map(commit => commit.getSha).toSeq
         )
       }
-      case _ => ???
+      case _ => null
     }
 
   }
