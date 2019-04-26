@@ -5,6 +5,7 @@ import java.time.{LocalDate, LocalDateTime, ZoneId}
 import adapter.gateway.github.{GitHubActivitiesGateway, GitHubUserGateway}
 import domain.git_account.GitClientId.GitHub
 import domain.git_account.{AccessToken, GitAccount}
+import domain.git_activity.GitActivityType.Push
 import domain.git_activity._
 import javax.inject.{Inject, Singleton}
 import org.eclipse.egit.github.core.client
@@ -17,18 +18,19 @@ import scala.collection.JavaConverters.collectionAsScalaIterableConverter
 
 @Singleton
 class GitHubActivitiesGatewayImpl @Inject() extends GitHubActivitiesGateway with GitHubUserGateway {
-  override def getUserEvents(accessToken: AccessToken, from: LocalDate, to: LocalDate): GitActivities = {
+  override def getUserEvents(accessToken: AccessToken, from: LocalDate, to: LocalDate): PushActivities = {
     val gitHubClient = new GitHubClient()
     gitHubClient.setOAuth2Token(accessToken.value)
 
     @tailrec
-    def parseEventRecursive(eventPageIterator: PageIterator[Event], initEvents: GitActivities = GitActivities.empty()): GitActivities = {
+    def parseEventRecursive(eventPageIterator: PageIterator[Event], initEvents: PushActivities = PushActivities.empty()): PushActivities = {
       if (!eventPageIterator.hasNext) {
         return initEvents
       }
       val events = initEvents ++ eventPageIterator.next().asScala
         .filter(e => LocalDateTime.ofInstant(e.getCreatedAt.toInstant, ZoneId.systemDefault()).toLocalDate.isAfter(from))
-        .map(e => e.toGitActivity)
+        .filter(e => e.getType == "PushEvent")
+        .map(e => e.toPushActivity)
         .foldLeft(initEvents)((activities, activity) => if (activity == null) activities else activities + activity)
       parseEventRecursive(eventPageIterator, events)
     }
@@ -36,7 +38,7 @@ class GitHubActivitiesGatewayImpl @Inject() extends GitHubActivitiesGateway with
     Option(new UserService(gitHubClient).getUser).map {gitUser =>
       val eventPageIterator = new EventService(gitHubClient).pageUserEvents(gitUser.getLogin)
       parseEventRecursive(eventPageIterator)
-    }.getOrElse(GitActivities.empty())
+    }.getOrElse(PushActivities.empty())
   }
 
   override def getUser(accessToken: AccessToken) = {
@@ -48,8 +50,7 @@ class GitHubActivitiesGatewayImpl @Inject() extends GitHubActivitiesGateway with
   }
 
   implicit class EventsConverter(event: Event) {
-    def toGitActivity : GitActivity = event.getType match {
-      case "PushEvent" => {
+    def toPushActivity : PushActivity = {
         new PushActivity(
           GitRepository(
             GitHub,
@@ -59,8 +60,5 @@ class GitHubActivitiesGatewayImpl @Inject() extends GitHubActivitiesGateway with
           event.getPayload.asInstanceOf[PushPayload].getCommits.asScala.map(commit => commit.getSha).toSeq
         )
       }
-      case _ => null
-    }
-
   }
 }

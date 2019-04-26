@@ -5,5 +5,5 @@ import java.time.LocalDate
 import domain.git_account.GitAccount
 
 trait GitActivitiesRepository {
-  def findByUserIdCreatedAtBetween(gitAccount: GitAccount, from: LocalDate, to: LocalDate): GitActivities
+  def findByUserIdCreatedAtBetween(gitAccount: GitAccount, from: LocalDate, to: LocalDate): PushActivities
 }
