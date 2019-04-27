@@ -1,10 +1,12 @@
 package domain.git_activity
 
-import domain.git_activity.GitActivityType.Push
-
 class PushActivities(private val values: Seq[PushActivity]) {
-  def countByRepositoryAndEventType() = {
-    new PushActivitySummaries(values.groupBy(e => e.gitRepository).map(e => new PushActivitySummary(e._1, Push, e._2.size)).toSeq)
+  def toSummary = {
+    new PushActivitySummary(values)
+  }
+
+  def groupByRepository = {
+    values.groupBy(e => e.gitRepository).map{case(gitRepository, pushActivities) => (gitRepository, new PushActivities(pushActivities))}
   }
 
   def ++(pushActivities: PushActivities) = new PushActivities(values ++ pushActivities.values)
@@ -20,6 +22,7 @@ class PushActivities(private val values: Seq[PushActivity]) {
   def foreach(f: PushActivity => Unit) = values.foreach(f)
 
   def map[T](f: PushActivity => T) = values.map(f)
+
 }
 
 object PushActivities {

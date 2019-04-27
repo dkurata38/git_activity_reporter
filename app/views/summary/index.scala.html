@@ -1,5 +1,7 @@
 @import domain.git_activity.PushActivities
+@import domain.git_activity.PushActivitySummary
 @(gitEvents: PushActivities)
+@wholeSummary = @{gitEvents.toSummary}
 
 @main("Welcome to Play") {
   <div class="uk-section">
@@ -13,17 +15,34 @@
           </ul>
         </div>
         <div class="uk-width-1-2@@s uk-width-4-5@@m">
-          <h1>Gitアクティビティサマリー</h1>
-          @for(summary <- gitEvents.countByRepositoryAndEventType()) {
+          <h1>サマリー</h1>
+            <dl>
+              <dt>全体</dt>
+              <dt>プッシュ回数</dt>
+              <dd>@wholeSummary.pushCount 回</dd>
+              <dt>コミット回数</dt>
+              <dd>@wholeSummary.commitsCount 回</dd>
+              <dt>プッシュ1回あたりの平均コミット数</dt>
+              <dd>@wholeSummary.commitsCountPerPush 回</dd>
+            </dl>
+
+          @for(activitiesEntry <- gitEvents.groupByRepository) {
             <dl>
               <dt>リポジトリ</dt>
               <dd>
-                <a href="@summary.repository.url">
-                  @summary.repository.repositoryId.value (@summary.repository.gitClientId.value)
+                <a href="@activitiesEntry._1.url">
+                  @activitiesEntry._1.repositoryId.value (@activitiesEntry._1.gitClientId.value)
                 </a>
               </dd>
-              <dt>Push回数</dt>
-              <dd>@summary.count 回</dd>
+              @{
+                val summary = activitiesEntry._2.toSummary
+                <dt>Push回数</dt>
+                <dd>{summary.pushCount} 回</dd>
+                <dt>コミット回数</dt>
+                <dd>{summary.commitsCount} 回</dd>
+                <dt>プッシュ1回あたりの平均コミット数</dt>
+                <dd>{summary.commitsCountPerPush} 回</dd>
+             }
             </dl>
           }
         </div>
