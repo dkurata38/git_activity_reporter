@@ -15,6 +15,7 @@ import play.api.{Configuration, Logger}
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
+import adapter.web.controllers.routes._
 
 
 @Singleton
@@ -48,16 +49,16 @@ class GithubOAuthController @Inject()(implicit config: Configuration, ws: WSClie
 
       maybeAccessToken.flatMap { accessToken =>
         maybeOauthPurpose.map {
-          case OauthPurpose.SingUp => userSignInUseCaseInteractor.signInWith(GitHub, accessToken) match {
+          case OauthPurpose.SignIn => userSignInUseCaseInteractor.signInWith(GitHub, accessToken) match {
             case Right(userToken) =>
-              Redirect(adapter.web.controllers.routes.SummaryController.index()).withSession(("accessToken", userToken.value))
+              Redirect(SummaryController.index()).withSession(("accessToken", userToken.value))
             case Left(message) =>
-              Redirect(adapter.web.controllers.routes.HomeController.index()).flashing(("message", message))
+              Redirect(HomeController.index()).flashing(("message", message))
           }
-          case OauthPurpose.Link => Redirect(adapter.web.controllers.routes.HomeController.index())
+          case OauthPurpose.Link => Redirect(HomeController.index())
         }
       }
-    }.getOrElse(Redirect(adapter.web.controllers.routes.HomeController.index()))
+    }.getOrElse(Redirect(HomeController.index()))
   }
 }
 

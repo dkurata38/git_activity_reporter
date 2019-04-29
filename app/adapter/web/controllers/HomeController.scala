@@ -3,6 +3,7 @@ package adapter.web.controllers
 import application.inputport.FindUserByTokenUseCaseInputPort
 import javax.inject.{Inject, Singleton}
 import play.api.mvc._
+import adapter.web.controllers.routes._
 
 /**
   * This controller creates an `Action` to handle HTTP requests to the
@@ -21,7 +22,7 @@ class HomeController @Inject()(cc: ControllerComponents, findUserByTokenUseCaseI
   def index() = Action { implicit request: Request[AnyContent] =>
     request.session.get("accessToken").map(accessToken =>
       findUserByTokenUseCaseInputPort.getUserOf(accessToken) match {
-        case Some(_) => Redirect(adapter.web.controllers.routes.SummaryController.index())
+        case Some(_) => Redirect(SummaryController.index())
         case None => {
           val session = request.session - "accessToken"
           Ok(views.html.index()).withSession(session)
