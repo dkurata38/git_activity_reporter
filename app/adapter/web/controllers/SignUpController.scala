@@ -27,13 +27,4 @@ class SignUpController @Inject() (cc: ControllerComponents, config: Configuratio
         }
       }
   }
-
-  def complete = Action { implicit request: Request[AnyContent] =>
-    request.session.get("accessToken").map{accessToken =>
-        userActivationUseCaseInputPort.activate(accessToken) match {
-          case Right(token) => Redirect(SummaryController.index()).withSession(("accessToken", token.value))
-          case Left(message) => Redirect(HomeController.index()).flashing(("message" , message))
-        }
-    }.getOrElse(Redirect(HomeController.index()))
-  }
 }
