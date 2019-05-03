@@ -10,7 +10,7 @@ GET        /signin/twitter               adapter.web.controllers.TwitterOAuthCon
 GET        /signin_callback/twitter        adapter.web.controllers.TwitterOAuthController.signInCallback
 GET        /signin/github                 adapter.web.controllers.GithubOAuthController.signIn
 GET        /signin_callback/github         adapter.web.controllers.GithubOAuthController.signInCallback
-GET        /signup/git           adapter.web.controllers.SignUpController.linkGit
+GET        /signin/git/:clientId           adapter.web.controllers.SignUpController.linkGit(clientId: String)
 #GET        /signup/sns           adapter.web.controllers.SignUpController.linkSNS
 GET        /signup/complete           adapter.web.controllers.SignUpController.complete
 GET         /summary/index      adapter.web.controllers.SummaryController.index
