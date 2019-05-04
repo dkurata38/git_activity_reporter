@@ -3,6 +3,7 @@ package adapter.web.controllers
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
+import adapter.web.controllers.routes._
 import application.cache.CacheRepository
 import application.inputport.{FindUserByTokenUseCaseInputPort, LinkGitAccountUseCaseInputPort}
 import application.interactor.UserSignInUseCaseInteractor
@@ -15,7 +16,6 @@ import play.api.{Configuration, Logger}
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
-import adapter.web.controllers.routes._
 
 
 @Singleton
@@ -47,17 +47,17 @@ class GithubOAuthController @Inject()(implicit config: Configuration, ws: WSClie
         gitHubOauth <- maybeGitHubOauth
       } yield gitHubOauth.getOAuthAccessToken(state, code)).flatten
 
-      maybeAccessToken.flatMap { accessToken =>
-        maybeOauthPurpose.map {
-          case OauthPurpose.SignIn => userSignInUseCaseInteractor.signInWith(GitHub, accessToken) match {
-            case Right(userToken) =>
-              Redirect(SummaryController.index()).withSession(("accessToken", userToken.value))
-            case Left(message) =>
-              Redirect(HomeController.index()).flashing(("message", message))
-          }
-          case OauthPurpose.Link => Redirect(HomeController.index())
+      for {
+        accessToken <- maybeAccessToken
+        oauthPurpose <- maybeOauthPurpose
+      } yield {
+        oauthPurpose match {
+          case OauthPurpose.SignIn =>
+            userSignInUseCaseInteractor.signInWith(GitHub, accessToken)
+              .map(userToken => Redirect(SummaryController.index()).withSession(("accessToken", userToken.value)))
+          case OauthPurpose.Link => ??? // TODO
         }
-      }
+      }.left.map(message => Redirect(HomeController.index()).flashing(("message", message))).merge
     }.getOrElse(Redirect(HomeController.index()))
   }
 }
@@ -67,12 +67,12 @@ class GitHubOauth(implicit configuration: Configuration) {
   private val requestToken = UUID.randomUUID().toString
   private val config = OAuthConfig.configLoader.load(configuration.underlying, "app." + GitHub.value)
 
-  def getRequestToken = requestToken
+  def getRequestToken: String = requestToken
 
   def getAuthorizationURL =
     s"${GitHubOauth.authorizationUrl}?client_id=${config.clientId}&client_secret=${config.clientSecret}&redirect_url=${config.callbackUrl}&scope=${GitHubOauth.scope}&state=$requestToken"
 
-  def getOAuthAccessToken(state: String, code: String)(implicit ws: WSClient) = {
+  def getOAuthAccessToken(state: String, code: String)(implicit ws: WSClient): Option[String] = {
     if (state == requestToken) {
       val futureAccessToken = ws.url(GitHubOauth.accessTokenUrl)
         .addHttpHeaders(("Accept", "application/json"))
