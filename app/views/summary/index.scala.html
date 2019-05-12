@@ -1,5 +1,7 @@
+@@import domain.git.PushActivities
+@import domain.git.activity.PushActivitySummary
 @import domain.git_activity.PushActivities
-@import domain.git_activity.PushActivitySummary
+@import domain.git.activity.PushActivities
 @(gitEvents: PushActivities)
 @wholeSummary = @{gitEvents.toSummary}
 

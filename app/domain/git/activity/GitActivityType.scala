@@ -1,4 +1,4 @@
-package domain.git_activity
+package domain.git.activity
 
 sealed abstract class GitActivityType
 

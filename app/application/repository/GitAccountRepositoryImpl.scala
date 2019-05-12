@@ -1,8 +1,10 @@
 package application.repository
 
 import adapter.gateway.github.GitHubUserGateway
-import domain.git_account.GitClientId.GitHub
-import domain.git_account.{AccessToken, GitAccount, GitAccountRepository, GitClientId}
+import domain.git.{GitAccount, GitClientId}
+import domain.git.GitClientId.GitHub
+import domain.git.account.{AccessToken, GitAccount, GitAccountRepository}
+import domain.git_account.GitAccount
 import domain.user.UserId
 import javax.inject.{Inject, Singleton}
 import scalikejdbc.{DB, DBSession, _}
@@ -38,9 +40,9 @@ class GitAccountRepositoryImpl @Inject() (private implicit val gitHubUserGateway
     AccessToken(rs.string("access_token"))
   )
 
-  override def findByClientIdAndUserName(clientId: GitClientId, userName: String) = {
+  override def findByClientIdAndUserName(clientId: GitClientId, userName: String): Option[GitAccount] = {
     DB readOnly { implicit session: DBSession =>
-      sql"SELECT * FROM git_account WHERE user_name = ${userName} AND client_id = ${clientId.value}"
+      sql"SELECT * FROM git_account WHERE user_name = $userName AND client_id = ${clientId.value}"
         .map(rs => gitAccountMap(rs)).first().apply()
     }
   }

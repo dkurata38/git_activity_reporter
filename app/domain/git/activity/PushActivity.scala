@@ -1,5 +1,5 @@
-package domain.git_activity
+package domain.git.activity
 
 class PushActivity(val gitRepository: GitRepository, val commitSHAs: Seq[String]){
-  def commitCount = commitSHAs.size
+  def commitCount: Int = commitSHAs.size
 }

@@ -1,7 +1,7 @@
 import Dependencies._
 
-lazy val git_activity_reporter = (project in file(".")).
-  settings(
+lazy val git_activity_reporter = (project in file("."))
+  .settings(
     inThisBuild(List(
       organization := "com.github.dkurata38",
       scalaVersion := "2.12.8",

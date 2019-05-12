@@ -1,8 +1,7 @@
 package application.interactor
 
 import application.inputport.FindUserByTokenUseCaseInputPort
-import domain.user.{RegistrationStatus, User, UserRepository}
-import domain.user_token.{Token, UserTokenRepository}
+import domain.user._
 import javax.inject.{Inject, Singleton}
 
 @Singleton

@@ -1,8 +1,8 @@
 package application.inputport
 
-import domain.git_account.GitClientId
+import domain.git.GitClientId
 import domain.social.SocialClientId
-import domain.user_token.Token
+import domain.user.Token
 
 trait UserSignInUseCaseInputPort {
   def signInWith(clientId: GitClientId, accessToken: String): Either[String, Token]

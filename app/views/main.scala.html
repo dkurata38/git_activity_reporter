@@ -4,7 +4,7 @@
 * two arguments, a `String` for the title of the page and an `Html`
 * object to insert into the body of the page.
 *@
-@(title: String)(content: Html)(implicit flash: Flash = Flash())
+@(title: String)(content: Html)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -32,7 +32,7 @@
                 </nav>
             </div>
         </div>
-        @flash.get("message").orNull
+        @* flash.get("message").orNull *@
         @* And here's where we render the `Html` object containing
         * the page content. *@
         @content

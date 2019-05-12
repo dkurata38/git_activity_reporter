@@ -1,4 +1,4 @@
-package domain.user_token
+package domain.user
 
 import java.util.UUID
 

@@ -1,11 +1,11 @@
-package domain.git_activity
+package domain.git.activity
 
 class PushActivities(private val values: Seq[PushActivity]) {
-  def toSummary = {
+  def toSummary: PushActivitySummary = {
     new PushActivitySummary(values)
   }
 
-  def groupByRepository = {
+  def groupByRepository: Map[GitRepository, PushActivities] = {
     values.groupBy(e => e.gitRepository).map{case(gitRepository, pushActivities) => (gitRepository, new PushActivities(pushActivities))}
   }
 
@@ -19,9 +19,9 @@ class PushActivities(private val values: Seq[PushActivity]) {
 
   def iterator: Iterator[PushActivity] = values.iterator
 
-  def foreach(f: PushActivity => Unit) = values.foreach(f)
+  def foreach(f: PushActivity => Unit): Unit = values.foreach(f)
 
-  def map[T](f: PushActivity => T) = values.map(f)
+  def map[T](f: PushActivity => T): Seq[T] = values.map(f)
 
 }
 

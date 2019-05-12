@@ -1,7 +1,8 @@
 package application.inputport
 
-import domain.git_account.{AccessToken, GitClientId}
-import domain.user_token.Token
+import domain.git.GitClientId
+import domain.git.account.AccessToken
+import domain.user.Token
 
 trait UserActivationUseCaseInputPort {
   def activate(token: String): Either[String, Token]

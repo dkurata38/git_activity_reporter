@@ -7,7 +7,7 @@ import adapter.web.controllers.routes._
 import application.cache.CacheRepository
 import application.inputport.{FindUserByTokenUseCaseInputPort, LinkGitAccountUseCaseInputPort}
 import application.interactor.UserSignInUseCaseInteractor
-import domain.git_account.GitClientId.GitHub
+import domain.git.GitClientId.GitHub
 import javax.inject.{Inject, Singleton}
 import play.api.libs.ws.WSClient
 import play.api.mvc.{Action, AnyContent, ControllerComponents, Request}

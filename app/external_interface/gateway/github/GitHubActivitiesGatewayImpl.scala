@@ -3,10 +3,12 @@ package external_interface.gateway.github
 import java.time.{LocalDate, LocalDateTime, ZoneId}
 
 import adapter.gateway.github.{GitHubActivitiesGateway, GitHubUserGateway}
-import domain.git_account.GitClientId.GitHub
-import domain.git_account.{AccessToken, GitAccount}
-import domain.git_activity.GitActivityType.Push
-import domain.git_activity._
+import domain.git.GitClientId.GitHub
+import domain.git._
+import domain.git.account.{AccessToken, GitAccount}
+import domain.git.activity.{GitRepository, GitRepositoryId, PushActivities, PushActivity}
+import domain.git_account.GitAccount
+import domain.git_activity.{GitRepository, PushActivities, PushActivity}
 import javax.inject.{Inject, Singleton}
 import org.eclipse.egit.github.core.client
 import org.eclipse.egit.github.core.client.{GitHubClient, PageIterator}
@@ -41,7 +43,7 @@ class GitHubActivitiesGatewayImpl @Inject() extends GitHubActivitiesGateway with
     }.getOrElse(PushActivities.empty())
   }
 
-  override def getUser(accessToken: AccessToken) = {
+  override def getUser(accessToken: AccessToken): Option[GitAccount] = {
     val gitHubClient = new client.GitHubClient()
     gitHubClient.setOAuth2Token(accessToken.value)
     val userService = new UserService(gitHubClient)

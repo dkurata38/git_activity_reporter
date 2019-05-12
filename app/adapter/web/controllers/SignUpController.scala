@@ -4,12 +4,12 @@ import java.util.UUID
 
 import application.cache.CacheRepository
 import application.inputport.{FindUserByTokenUseCaseInputPort, UserActivationUseCaseInputPort}
-import domain.git_account.GitClientId
-import domain.git_account.GitClientId.GitHub
+import domain.git.GitClientId.GitHub
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.mvc.{AbstractController, AnyContent, ControllerComponents, Request}
 import adapter.web.controllers.routes._
+import domain.git.GitClientId
 
 @Singleton
 class SignUpController @Inject() (cc: ControllerComponents, config: Configuration, cacheRepository: CacheRepository, userActivationUseCaseInputPort: UserActivationUseCaseInputPort, findUserByTokenUseCaseInputPort: FindUserByTokenUseCaseInputPort) extends AbstractController(cc){

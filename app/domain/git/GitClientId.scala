@@ -1,4 +1,4 @@
-package domain.git_account
+package domain.git
 
 import domain.{Enum, EnumValue}
 

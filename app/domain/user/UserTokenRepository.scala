@@ -1,6 +1,4 @@
-package domain.user_token
-
-import domain.user.UserId
+package domain.user
 
 trait UserTokenRepository {
   def findByUserId(userId: UserId): Option[UserToken]

@@ -2,10 +2,11 @@ package application.interactor
 
 import application.inputport.UserActivationUseCaseInputPort
 import application.repository.UserRepositoryImpl
-import domain.git_account.{AccessToken, GitAccount, GitAccountRepository, GitClientId}
+import domain.git.account.{AccessToken, GitAccount, GitAccountRepository}
+import domain.git.{GitAccount, GitClientId}
+import domain.git_account.GitAccount
 import domain.social.SocialAccountRepository
-import domain.user.{RegistrationStatus, User, UserId}
-import domain.user_token.{Token, UserToken, UserTokenRepository}
+import domain.user._
 import javax.inject.{Inject, Singleton}
 
 @Singleton

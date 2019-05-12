@@ -1,5 +1,6 @@
-package domain.git_account
+package domain.git.account
 
+import domain.git.GitClientId
 import domain.user.UserId
 
 trait GitAccountRepository {

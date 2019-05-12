@@ -1,7 +1,6 @@
 package application.repository
 
-import domain.user.UserId
-import domain.user_token.{Token, UserToken, UserTokenRepository}
+import domain.user.{Token, UserId, UserToken, UserTokenRepository}
 import javax.inject.{Inject, Singleton}
 import scalikejdbc.{DB, DBSession, _}
 

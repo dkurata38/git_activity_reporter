@@ -4,8 +4,8 @@ import application.inputport._
 import application.interactor._
 import application.repository._
 import com.google.inject.AbstractModule
-import domain.git_account.GitAccountRepository
-import domain.git_activity.GitActivitiesRepository
+import domain.git.account.GitAccountRepository
+import domain.git.activity.GitActivitiesRepository
 import domain.social.SocialAccountRepository
 import domain.user.UserRepository
 import domain.user_token.UserTokenRepository
