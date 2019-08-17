@@ -1,8 +1,7 @@
 package application.inputport
 
-import domain.git.account.{AccessToken, GitAccount}
 import domain.git.GitClientId
-import domain.git_account.GitAccount
+import domain.git.account.{AccessToken, GitAccount}
 
 trait LinkGitAccountUseCaseInputPort {
   /**

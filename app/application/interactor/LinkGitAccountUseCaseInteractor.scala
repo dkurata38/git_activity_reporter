@@ -1,9 +1,8 @@
 package application.interactor
 
 import application.inputport.LinkGitAccountUseCaseInputPort
+import domain.git.GitClientId
 import domain.git.account.{AccessToken, GitAccount, GitAccountRepository}
-import domain.git.{GitAccount, GitClientId}
-import domain.git_account.GitAccount
 import domain.user.{Token, UserTokenRepository}
 import javax.inject.{Inject, Singleton}
 

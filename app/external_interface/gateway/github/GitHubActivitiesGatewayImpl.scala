@@ -4,11 +4,8 @@ import java.time.{LocalDate, LocalDateTime, ZoneId}
 
 import adapter.gateway.github.{GitHubActivitiesGateway, GitHubUserGateway}
 import domain.git.GitClientId.GitHub
-import domain.git._
 import domain.git.account.{AccessToken, GitAccount}
 import domain.git.activity.{GitRepository, GitRepositoryId, PushActivities, PushActivity}
-import domain.git_account.GitAccount
-import domain.git_activity.{GitRepository, PushActivities, PushActivity}
 import javax.inject.{Inject, Singleton}
 import org.eclipse.egit.github.core.client
 import org.eclipse.egit.github.core.client.{GitHubClient, PageIterator}

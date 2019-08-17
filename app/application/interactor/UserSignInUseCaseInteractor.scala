@@ -1,9 +1,8 @@
 package application.interactor
 
 import application.inputport.UserSignInUseCaseInputPort
+import domain.git.GitClientId
 import domain.git.account.{AccessToken, GitAccount, GitAccountRepository}
-import domain.git.{GitAccount, GitClientId}
-import domain.git_account.GitAccount
 import domain.social.SocialClientId.Twitter
 import domain.social.{SocialAccessToken, SocialAccountRepository, SocialClientId}
 import domain.user.RegistrationStatus.Regular

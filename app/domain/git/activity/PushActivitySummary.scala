@@ -5,5 +5,5 @@ class PushActivitySummary(val source: Seq[PushActivity]) {
 
   def commitsCount: Int = source.map(value => value.commitCount).sum
 
-  def commitsCountPerPush: Int = commitsCount / pushCount
+  def commitsCountPerPush: Int = if (pushCount == 0) commitsCount else pushCount
 }

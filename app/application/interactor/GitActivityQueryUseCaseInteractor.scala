@@ -2,12 +2,9 @@ package application.interactor
 
 import java.time.LocalDate
 
-import application.inputport.LoadPushActivityUseCaseInputPort
+import application.inputport.{GitActivityQueryUseCaseInputPort, LoadPushActivityUseCaseInputPort}
 import domain.git.account.{GitAccount, GitAccountRepository}
 import domain.git.activity.{GitActivitiesRepository, PushActivities}
-import domain.git.{GitAccount, GitActivitiesRepository, PushActivities}
-import domain.git_account.GitAccount
-import domain.git_activity.GitActivitiesRepository
 import domain.user.{Token, UserTokenRepository}
 import javax.inject.{Inject, Singleton}
 
@@ -16,7 +13,7 @@ class GitActivityQueryUseCaseInteractor @Inject() (
                                                     private implicit val userTokenRepository: UserTokenRepository,
                                                     private implicit val gitAccountRepository: GitAccountRepository,
                                                     private implicit val gitActivitiesRepository: GitActivitiesRepository
-                                                  ) extends LoadPushActivityUseCaseInputPort{
+                                                  ) extends GitActivityQueryUseCaseInputPort{
   override def queryGitActivities(token: String): PushActivities = {
     userTokenRepository.findByUserToken(Token(token))
       .map(userToken => gitAccountRepository.findAllByUserId(userToken.userId)

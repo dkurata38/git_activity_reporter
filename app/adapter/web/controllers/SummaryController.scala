@@ -5,7 +5,6 @@ import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.cache.SyncCacheApi
 import play.api.mvc.{AbstractController, AnyContent, ControllerComponents, Request}
-import adapter.web.controllers.routes._
 
 @Singleton
 class SummaryController @Inject() (cc:ControllerComponents, gitActivityQueryUseCaseInputPort: GitActivityQueryUseCaseInputPort, cache: SyncCacheApi, config: Configuration) extends AbstractController(cc){
@@ -13,6 +12,6 @@ class SummaryController @Inject() (cc:ControllerComponents, gitActivityQueryUseC
     request.session.get("accessToken").map{accessToken =>
       val gitEvents = gitActivityQueryUseCaseInputPort.queryGitActivities(accessToken)
       Ok(views.html.summary.index(gitEvents))
-    }.getOrElse(Redirect(HomeController.index()))
+    }.getOrElse(Redirect(routes.HomeController.index()))
   }
 }
